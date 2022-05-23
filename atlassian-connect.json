@@ -1,0 +1,83 @@
+{
+    "key": "onlyoffice-confluence-cloud",
+    "name": "Confluence cloud ONLYOFFICE integration app",
+    "description": "Confluence ONLYOFFICE integration app allows you to work on all kinds of office documents within Confluence using ONLYOFFICE Online Editors with the enhanced formatting toolset. View and co-edit the documents in real-time.",
+    "baseUrl": "{{localBaseUrl}}",
+    "authentication": {
+        "type": "jwt"
+    },
+    "lifecycle": {
+        "installed": "/installed"
+    },
+    "scopes": [
+        "READ",
+        "WRITE",
+        "ACT_AS_USER"
+    ],
+    "apiMigrations":{
+        "signed-install": true
+    },
+    "modules": {
+        "generalPages": [
+            {
+                "key": "onlyoffice-editor",
+                "name": {
+                    "value": "ONLYOFFICE Editor"
+                },
+                "url": "/onlyoffice-editor?pageId={page.id}&attachmentId={attachment.id}"
+            }
+        ],
+        "webItems": [
+            {
+                "key": "web-item-onlyoffice-edit",
+                "name": {
+                    "value": "Edit in ONLYOFFICE"
+                },
+                "url": "onlyoffice-editor",
+                "location": "system.attachment",
+                "context": "page",
+                "conditions": [
+                    {
+                        "condition": "has_attachment_permission",
+                        "params": {
+                            "permission": "EDIT"
+                        }
+                    }
+                ],
+                "weight": 9
+            },
+            {
+                "key": "web-item-onlyoffice-view",
+                "name": {
+                    "value": "View in ONLYOFFICE"
+                },
+                "url": "onlyoffice-editor",
+                "location": "system.attachment",
+                "context": "page",
+                "conditions": [
+                    {
+                        "condition": "has_attachment_permission",
+                        "params": {
+                            "permission": "VIEW"
+                        }
+                    },
+                    {
+                        "condition": "has_attachment_permission",
+                        "invert": true,
+                        "params": {
+                            "permission": "EDIT"
+                        }
+                    }
+                ],
+                "weight": 10
+            }
+        ],
+        "configurePage": {
+            "url": "/configure",
+            "name": {
+              "value": "ONLYOFFICE Configuration"
+            },
+            "key": "configure"
+        }
+    }
+}

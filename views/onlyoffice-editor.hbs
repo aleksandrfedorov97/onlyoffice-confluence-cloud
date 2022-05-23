@@ -1,0 +1,18 @@
+{{!< layout}}
+<div id="placeholder"></div>
+<script> 
+    $(document).ready(function() {
+        if (typeof DocsAPI === "undefined") {
+            alert("ONLYOFFICE cannot be reached. Please contact admin.");
+            return;
+        }
+
+        if (error = "{{error}}") {
+            alert(error);
+            return;
+        }
+
+        const jsonEditorConfig = JSON.parse(`{{{editorConfig}}}`);
+        var DocEditor = new DocsAPI.DocEditor("placeholder", jsonEditorConfig);
+    });
+</script>
