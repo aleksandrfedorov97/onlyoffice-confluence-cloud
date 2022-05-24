@@ -67,7 +67,7 @@ documentHelper.isEditable = function (extension) {
     return SUPPORTED_FORMATS[extension] !== undefined && SUPPORTED_FORMATS[extension]["edit"] === true;
 }
 
-documentHelper.getEditorConfig = function (clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit) {
+documentHelper.getEditorConfig = async function (addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit) {
 
     const fileType = documentHelper.getFileExtension(attachmentInfo.title);
     let mode = "view";
@@ -75,7 +75,7 @@ documentHelper.getEditorConfig = function (clientKey, localBaseUrl, hostBaseUrl,
 
     if (permissionEdit && documentHelper.isEditable(fileType)) {
         mode = "edit";
-        callbackUrl = urlHelper.getCallbackUrl(localBaseUrl, clientKey, attachmentInfo.container.id, attachmentInfo.id);
+        callbackUrl = await urlHelper.getCallbackUrl(addon, localBaseUrl, clientKey, userInfo.accountId, attachmentInfo.container.id, attachmentInfo.id);
     }
 
     return {
@@ -85,7 +85,7 @@ documentHelper.getEditorConfig = function (clientKey, localBaseUrl, hostBaseUrl,
         documentType: documentHelper.getDocumentType(fileType),
         document: {
             title: attachmentInfo.title,
-            url: urlHelper.getFileUrl(localBaseUrl, clientKey, attachmentInfo.container.id, attachmentInfo.id),
+            url: await urlHelper.getFileUrl(addon, localBaseUrl, clientKey, userInfo.accountId, attachmentInfo.container.id, attachmentInfo.id),
             fileType: fileType,
             key: null,
             info: {

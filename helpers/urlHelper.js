@@ -2,22 +2,42 @@ const {
     getAppProperty
 } = require("./requestHelper.js");
 
+const {
+    createQueryToken
+} = require("../helpers/jwtManager.js");
+
 var urlHelper = {};
 
-urlHelper.getFileUrl = function (localBaseUrl, clientKey, pageId, attachmentId) {
-    var url = localBaseUrl + "onlyoffice-download";
-    url = url + "?clientKey=" + clientKey;
-    url = url + "&pageId=" + pageId;
-    url = url + "&attachmentId=" + attachmentId;
-    return url;
+urlHelper.getFileUrl = async function (addon, localBaseUrl, clientKey, userAccountId, pageId, attachmentId) {
+
+    const token = await createQueryToken(
+        addon,
+        clientKey,
+        userAccountId,
+        {
+            pageId: pageId,
+            attachmentId: attachmentId,
+            operation: "download"
+        }
+    );
+
+    return localBaseUrl + "onlyoffice-download?token=" + token;
 }
 
-urlHelper.getCallbackUrl = function (localBaseUrl, clientKey, pageId, attachmentId) {
-    var url = localBaseUrl + "onlyoffice-callback";
-    url = url + "?clientKey=" + clientKey;
-    url = url + "&pageId=" + pageId;
-    url = url + "&attachmentId=" + attachmentId;
-    return url;
+urlHelper.getCallbackUrl = async function (addon, localBaseUrl, clientKey, userAccountId, pageId, attachmentId) {
+
+    const token = await createQueryToken(
+        addon,
+        clientKey,
+        userAccountId,
+        {
+            pageId: pageId,
+            attachmentId: attachmentId,
+            operation: "callback"
+        }
+    );
+
+    return localBaseUrl + "onlyoffice-callback?token=" + token;
 }
 
 urlHelper.getGoBackUrl = function (hostBaseUrl, pageId) {

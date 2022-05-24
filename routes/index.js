@@ -1,5 +1,4 @@
 import * as jwt from 'atlassian-jwt';
-
 const documentHelper = require("../helpers/documentHelper.js");
 const urlHelper = require("../helpers/urlHelper.js");
 
@@ -15,7 +14,8 @@ const {
 
 const {
     getJwtSecret,
-    getJwtHeader
+    getJwtHeader,
+    verifyQueryToken
 } = require("../helpers/jwtManager.js");
 
 export default function routes(app, addon) {
@@ -92,7 +92,7 @@ export default function routes(app, addon) {
                 context.error = `Sorry, this file format is not supported (${fileType})`;
             } else {
                 const permissionEdit = await checkPermissions(httpClient, userAccountId, attachmentId, "update");
-                const editorConfig = documentHelper.getEditorConfig(clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit);
+                const editorConfig = await documentHelper.getEditorConfig(addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit);
 
                 const jwtSecret = await getJwtSecret(addon, httpClient);
 
@@ -115,8 +115,23 @@ export default function routes(app, addon) {
 
     app.get('/onlyoffice-download', async (req, res) => {
 
+        const queryToken = req.query.token;
+
+        if (!queryToken) {
+            res.status(400).send("Query token not found");
+            return;
+        }
+
+        let context;
+        try {
+            context = await verifyQueryToken(addon, queryToken, "download");
+        } catch (error) {
+            res.status(401).send(`Invalid query token: ${error.message}`);
+            return;
+        }
+
         var httpClient = addon.httpClient({
-            clientKey: req.query.clientKey
+            clientKey: context.clientKey
         });
 
         const jwtSecret = await getJwtSecret(addon, httpClient);
@@ -139,15 +154,7 @@ export default function routes(app, addon) {
             }
         }
 
-        const pageId = req.query.pageId;
-        const attachmentId = req.query.attachmentId;
-
-        if (!pageId || !attachmentId) {
-            res.status(400).send();
-            return;
-        }
-
-        const uri = await getUriDownloadAttachment(httpClient, pageId, attachmentId);
+        const uri = await getUriDownloadAttachment(httpClient, context.pageId, context.attachmentId);
 
         res.setHeader("location", uri);
         res.status(302).send();
@@ -155,15 +162,30 @@ export default function routes(app, addon) {
 
     app.post('/onlyoffice-callback', async (req, res) => {
 
+        const queryToken = req.query.token;
+
+        if (!queryToken) {
+            res.status(400).send("Query token not found");
+            return;
+        }
+
+        let context;
+        try {
+            context = await verifyQueryToken(addon, queryToken, "callback");
+        } catch (error) {
+            res.status(401).send(`Invalid query token: ${error.message}`);
+            return;
+        }
+
         let body = req.body;
 
         if (!body) {
-            res.status(400).send();
+            res.status(400).send("Request body not found");
             return;
         }
 
         const httpClient = addon.httpClient({
-            clientKey: req.query.clientKey
+            clientKey: context.clientKey
         });
 
         const jwtSecret = await getJwtSecret(addon, httpClient);
@@ -198,13 +220,14 @@ export default function routes(app, addon) {
 
         } else if (body.status == 2 || body.status == 3) { // MustSave, Corrupted
             const userAccountId = body.actions[0].userid;
-            const pageId = req.query.pageId;
-            const attachmentId = req.query.attachmentId;
+            const pageId = context.pageId;
+            const attachmentId = context.attachmentId;
                 
             const fileData = await getFileDataFromUrl(body.url);
             const error = await updateContent(httpClient, userAccountId, pageId, attachmentId, fileData);
         } else if (body.status == 6 || body.status == 7) { // MustForceSave, CorruptedForceSave
             res.json({ error: 1, message: "Force save is not supported"});
+            return;
         }
 
         res.json({ error: 0 });
