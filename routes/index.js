@@ -75,13 +75,21 @@ export default function routes(app, addon) {
             docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient)
         };
 
+        let canRead;
         try {
-            const canRead = await checkPermissions(httpClient, userAccountId, attachmentId, "read");
-            if (!canRead) {
-                res.status(403).send("Forbidden: you don't have access to this content");
-                return;
-            }
+            canRead = await checkPermissions(httpClient, userAccountId, attachmentId, "read");
+        } catch (error) {
+            console.log(error);
+            res.status(403).send(error);
+            return;
+        }
 
+        if (!canRead) {
+            res.status(403).send("Forbidden: you don't have access to this content");
+            return;
+        }
+
+        try {
             const userInfo = await getUserInfo(httpClient, userAccountId);
             const attachmentInfo = await getAttachmentInfo(httpClient, pageId, attachmentId);
 
@@ -91,7 +99,13 @@ export default function routes(app, addon) {
             if (!documentType) {
                 context.error = `Sorry, this file format is not supported (${fileType})`;
             } else {
-                const permissionEdit = await checkPermissions(httpClient, userAccountId, attachmentId, "update");
+                let permissionEdit;
+                try {
+                    permissionEdit = await checkPermissions(httpClient, userAccountId, attachmentId, "update");
+                } catch (error) {
+                    console.log(error);      //ToDo warn log
+                }
+
                 const editorConfig = await documentHelper.getEditorConfig(addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit);
 
                 const jwtSecret = await getJwtSecret(addon, httpClient);
@@ -152,6 +166,19 @@ export default function routes(app, addon) {
                 res.status(401).send(`Invalid JWT: ${error.message}`);
                 return;
             }
+        }
+
+        let canRead;
+        try {
+            canRead = await checkPermissions(httpClient, context.userId, context.attachmentId, "read");
+        } catch (error) {
+            res.status(403).send(error);
+            return;
+        }
+
+        if (!canRead) {
+            res.status(403).send("Forbidden: you don't have access to this content");
+            return;
         }
 
         const uri = await getUriDownloadAttachment(httpClient, context.pageId, context.attachmentId);
@@ -222,7 +249,19 @@ export default function routes(app, addon) {
             const userAccountId = body.actions[0].userid;
             const pageId = context.pageId;
             const attachmentId = context.attachmentId;
-                
+
+            let permissionEdit;
+            try {
+                permissionEdit = await checkPermissions(httpClient, context.userId, context.attachmentId, "update");
+            } catch (error) {
+                res.status(403).send(error);    //ToDo warn log
+            }
+            
+            if (!permissionEdit) {
+                res.status(403).send("Forbidden: you don't have access to edit this content");
+                return;
+            }
+
             const fileData = await getFileDataFromUrl(body.url);
             const error = await updateContent(httpClient, userAccountId, pageId, attachmentId, fileData);
         } else if (body.status == 6 || body.status == 7) { // MustForceSave, CorruptedForceSave
