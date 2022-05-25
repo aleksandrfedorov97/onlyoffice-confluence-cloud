@@ -91,7 +91,7 @@ export default function routes(app, addon) {
 
         try {
             const userInfo = await getUserInfo(httpClient, userAccountId);
-            const attachmentInfo = await getAttachmentInfo(httpClient, pageId, attachmentId);
+            const attachmentInfo = await getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId);
 
             const fileType = documentHelper.getFileExtension(attachmentInfo.title);
             const documentType = documentHelper.getDocumentType(fileType);

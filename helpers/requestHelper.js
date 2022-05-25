@@ -34,7 +34,7 @@ function setAppProperty(httpClient, propertyKey, value) {
     });
 }
 
-function getAttachmentInfo(httpClient, pageId, attachmentId) {
+function getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId) {
     return new Promise((resolve, reject) => {
         // make sure the content ID is valid to prevent traversal
         if (!/^[A-Z0-9-]+$/i.test(pageId)) {
@@ -42,7 +42,7 @@ function getAttachmentInfo(httpClient, pageId, attachmentId) {
             return;
         }
 
-        httpClient.get({
+        httpClient.asUserByAccountId(userAccountId).get({
             url: `/rest/api/content/${pageId}/child/attachment?expand=history.lastUpdated,container`,
             json: true
         }, function(err, response, body) {
