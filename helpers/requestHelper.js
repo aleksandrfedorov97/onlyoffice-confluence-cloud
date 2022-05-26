@@ -6,16 +6,21 @@ function getAppProperty(httpClient, propertyKey) {
             url: `/rest/atlassian-connect/1/addons/onlyoffice-confluence-cloud/properties/${propertyKey}`,
             json: true
         }, function(err, response, body) {
-            if (err) {
-                reject(err);
-                return;
-            }
+            if (response.statusCode == 200) {
+                if (body.value === undefined || body.value == "") {
+                    resolve(null);
+                }
 
-            if (body.value === undefined || body.value == "") {
-                resolve(null);
+                resolve(body.value);
+            } else {
+                reject({
+                    method: "getAppProperty",
+                    code: response.statusCode,
+                    type: response.statusMessage,
+                    message: `Error getting app property: ${propertyKey}`,
+                    description: body.message ? body.message : body
+                });
             }
-
-            resolve(body.value);
         });
     });
 }
@@ -26,9 +31,16 @@ function setAppProperty(httpClient, propertyKey, value) {
             url: `/rest/atlassian-connect/1/addons/onlyoffice-confluence-cloud/properties/${propertyKey}`,
             json: value
         }, function(err, response, body) {
-            if (err) {
-                reject(err);
-                return;
+            if (response.statusCode == 200) {
+                resolve(true);
+            } else {
+                reject({
+                    method: "setAppProperty",
+                    code: response.statusCode,
+                    type: response.statusMessage,
+                    message: `Error setting app property: ${propertyKey}`,
+                    description: body.message ? body.message : body
+                });
             }
         });
     });
@@ -36,28 +48,33 @@ function setAppProperty(httpClient, propertyKey, value) {
 
 function getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId) {
     return new Promise((resolve, reject) => {
-        // make sure the content ID is valid to prevent traversal
-        if (!/^[A-Z0-9-]+$/i.test(pageId)) {
-            reject(new Error("Invalid content ID"));
-            return;
-        }
-
         httpClient.asUserByAccountId(userAccountId).get({
-            url: `/rest/api/content/${pageId}/child/attachment?expand=history.lastUpdated,container`,
+            url: `/rest/api/content/${pageId}/child/attachment?expand=history.lastUpdated,container,operations&limit=999999999`,
             json: true
         }, function(err, response, body) {
-            if (err) {
-                reject(err);
-                return;
-            }
-
-            for(var i in body.results) {
-                if (body.results[i].id == "att" + attachmentId) {
-                    resolve(body.results[i]);
+            if (response.statusCode == 200) {
+                for(var i in body.results) {
+                    if (body.results[i].id == "att" + attachmentId) {
+                        resolve(body.results[i]);
+                    }
                 }
+            } else {
+                reject({
+                    method: "getAttachmentInfo",
+                    code: response.statusCode,
+                    type: response.statusMessage,
+                    message: "Error getting attachment information.",
+                    description: body.message ? body.message : body
+                });
             }
 
-            resolve(null); //ToDo: check not null
+            reject({
+                method: "getAttachmentInfo",
+                code: 404,
+                type: "Not found",
+                message: "Error getting attachment information.",
+                description: `Not found attachment with id: ${attachmentId}.`
+            });
         });
     });
 }
@@ -68,50 +85,29 @@ function getUserInfo(httpClient, userAccountId) {
             url: `/rest/api/user?accountId=${userAccountId}`,
             json: true
         }, function(err, response, body) {
-            if (err) {
-                reject(err);
-                return;
+            if (response.statusCode == 200) {
+                resolve(body);
+            } else {
+                reject({
+                    method: "getUserInfo",
+                    code: response.statusCode,
+                    type: response.statusMessage,
+                    message: "Error getting user information.",
+                    description: body.message ? body.message : body
+                });
             }
-
-            resolve(body);
         })
     });
 }
 
-function checkPermissions(httpClient, accountId, contentId, operation) {
-    return new Promise((resolve, reject) => {
-        // make sure the content ID is valid to prevent traversal
-        if (!/^[A-Z0-9-]+$/i.test(contentId)) {
-            reject(new Error("Invalid content ID"));
-            return;
+function checkPermissions(operations, operation) {
+    for(var i in operations) {
+        if (operations[i].targetType == "attachment" && operations[i].operation == operation) {
+            return true;
         }
+    }
 
-        httpClient.asUserByAccountId(accountId).post({
-            url: `/rest/api/content/${encodeURIComponent(contentId)}/permission/check`,
-            headers: {
-                "X-Atlassian-Token": "no-check"
-            },
-            json: {
-                subject: {
-                    type: "user",
-                    identifier: accountId
-                },
-                operation
-            }
-        }, function (err, httpResponse, body) {
-            if (err) {
-                reject(err);
-                return;
-            }
-
-            if (body.errors && body.errors.length > 0) {
-                reject(body.errors);
-                return;
-            }
-
-            resolve(body.hasPermission);
-        });
-    });
+    return false;
 }
 
 function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData) {
@@ -135,9 +131,9 @@ function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData
     });
 }
 
-function getUriDownloadAttachment(httpClient, pageId, attachmentId) {
+function getUriDownloadAttachment(httpClient, userAccountId, pageId, attachmentId) {
     return new Promise((resolve, reject) => {
-        httpClient.get({
+        httpClient.asUserByAccountId(userAccountId).get({
             url: `/rest/api/content/${pageId}/child/attachment/${attachmentId}/download`
         }, function(err, response, body) {
             if (err) {

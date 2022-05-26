@@ -50,81 +50,98 @@ export default function routes(app, addon) {
         }
 
         try {
-            setAppProperty(httpClient, "docApiUrl", req.body.docApiUrl);
-            setAppProperty(httpClient, "jwtSecret", req.body.jwtSecret);
-            setAppProperty(httpClient, "jwtHeader", req.body.jwtHeader);
+            let docApiUrl = setAppProperty(httpClient, "docApiUrl", req.body.docApiUrl);
+            let jwtSecret = setAppProperty(httpClient, "jwtSecret", req.body.jwtSecret);
+            let jwtHeader = setAppProperty(httpClient, "jwtHeader", req.body.jwtHeader);
+            Promise.all([docApiUrl, jwtSecret, jwtHeader]).then(values => {
+                res.status(200).send();
+            });
         } catch (error) {
+            addon.logger.warn(error);
             res.status(500).send("Internal error");
         }
-
-        res.status(200).send();
     });
 
     app.get('/onlyoffice-editor', addon.authenticate(), async (req, res) => {
 
-        const httpClient = addon.httpClient(req);
         const userAccountId = req.context.userAccountId;
         const localBaseUrl = req.context.localBaseUrl;
         const hostBaseUrl = req.context.hostBaseUrl;
-        const clientKey = req.context.clientKey
+        const clientKey = req.context.clientKey;
+
         const pageId = req.query.pageId;
         const attachmentId = req.query.attachmentId;
 
-        let context = {
-            title: "ONLYOFFICE",
-            docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient)
-        };
-
-        let canRead;
-        try {
-            canRead = await checkPermissions(httpClient, userAccountId, attachmentId, "read");
-        } catch (error) {
-            console.log(error);
-            res.status(403).send(error);
-            return;
-        }
-
-        if (!canRead) {
-            res.status(403).send("Forbidden: you don't have access to this content");
+        if (!pageId || !attachmentId) {
+            addon.logger.warn("Not found requested paremeters (pageId or attachmentId)");
+            sendError(
+                404, 
+                "Not found",
+                "Attachment not found.",
+                "Not found requested paremeters (pageId or attachmentId)."
+            );
             return;
         }
 
         try {
+            const httpClient = addon.httpClient(req);
+
             const userInfo = await getUserInfo(httpClient, userAccountId);
-            const attachmentInfo = await getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId);
+            const attachmentInfo = await getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId); //ToDo: fileName
 
             const fileType = documentHelper.getFileExtension(attachmentInfo.title);
             const documentType = documentHelper.getDocumentType(fileType);
 
             if (!documentType) {
-                context.error = `Sorry, this file format is not supported (${fileType})`;
-            } else {
-                let permissionEdit;
-                try {
-                    permissionEdit = await checkPermissions(httpClient, userAccountId, attachmentId, "update");
-                } catch (error) {
-                    console.log(error);      //ToDo warn log
-                }
+                sendError(
+                    415, 
+                    "Unsupported MediaType",
+                    `Sorry, this file format is not supported (${fileType})`
+                );
+                return;
+            } 
 
-                const editorConfig = await documentHelper.getEditorConfig(addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit);
+            let permissionEdit = checkPermissions(attachmentInfo.operations, "update"); //ToDo: to getConfig
 
-                const jwtSecret = await getJwtSecret(addon, httpClient);
+            let editorConfig = await documentHelper.getEditorConfig(addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit);
 
-                if (jwtSecret) {
-                    editorConfig.token = jwt.encodeSymmetric(editorConfig, jwtSecret);
-                }
+            const jwtSecret = await getJwtSecret(addon, httpClient);
 
-                context.editorConfig = JSON.stringify(editorConfig);
+            if (jwtSecret) {
+                editorConfig.token = jwt.encodeSymmetric(editorConfig, jwtSecret);
             }
+
+            res.render(
+                'onlyoffice-editor.hbs',
+                {
+                    editorConfig: JSON.stringify(editorConfig),
+                    docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient)
+                }
+            );
         } catch (error) {
-            console.log(error);
-            res.status(500).send("Internal error"); // ToDo: error
+            addon.logger.warn(error);
+            sendError(
+                error.code || 500,
+                error.type || "Undefined error",
+                error.message || "An unexpected error occurred while opening the document.",
+                error.description || ""
+            )
+            return;
         }
 
-        res.render(
-            'onlyoffice-editor.hbs',
-            context
-        );
+        function sendError(code, type, message, description) {
+            res.render(
+                'error.hbs',
+                {
+                    error: {
+                        code: code, 
+                        type: type,
+                        message: message,
+                        description: description
+                    }
+                }
+            );
+        }
     });
 
     app.get('/onlyoffice-download', async (req, res) => {
@@ -168,20 +185,20 @@ export default function routes(app, addon) {
             }
         }
 
-        let canRead;
-        try {
-            canRead = await checkPermissions(httpClient, context.userId, context.attachmentId, "read");
-        } catch (error) {
-            res.status(403).send(error);
-            return;
-        }
+        // let canRead;
+        // try {
+        //     canRead = await checkPermissions(httpClient, context.userId, context.attachmentId, "read");
+        // } catch (error) {
+        //     res.status(403).send(error);
+        //     return;
+        // }
 
-        if (!canRead) {
-            res.status(403).send("Forbidden: you don't have access to this content");
-            return;
-        }
+        // if (!canRead) {
+        //     res.status(403).send("Forbidden: you don't have access to this content");
+        //     return;
+        // }
 
-        const uri = await getUriDownloadAttachment(httpClient, context.pageId, context.attachmentId);
+        const uri = await getUriDownloadAttachment(httpClient, context.userId, context.pageId, context.attachmentId);
 
         res.setHeader("location", uri);
         res.status(302).send();
@@ -250,12 +267,12 @@ export default function routes(app, addon) {
             const pageId = context.pageId;
             const attachmentId = context.attachmentId;
 
-            let permissionEdit;
-            try {
-                permissionEdit = await checkPermissions(httpClient, context.userId, context.attachmentId, "update");
-            } catch (error) {
-                res.status(403).send(error);    //ToDo warn log
-            }
+            // let permissionEdit;
+            // try {
+            //     permissionEdit = await checkPermissions(httpClient, context.userId, context.attachmentId, "update");
+            // } catch (error) {
+            //     res.status(403).send(error);    //ToDo warn log
+            // }
             
             if (!permissionEdit) {
                 res.status(403).send("Forbidden: you don't have access to edit this content");

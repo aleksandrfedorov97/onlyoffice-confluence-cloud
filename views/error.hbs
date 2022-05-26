@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta name="ap-local-base-url" content="{{localBaseUrl}}">
+    <title>{{title}}</title>
+    <script src="https://connect-cdn.atl-paas.net/all.js" type="text/javascript" data-options = "sizeToParent:true;hideFooter:true;"></script>
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.8.12/css/aui.css" media="all">
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.8.12/css/aui-experimental.css" media="all">
+    <!--[if IE 9]><link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.8.12/css/aui-ie9.css" media="all"><![endif]-->
+    <style>
+        body {
+            background-color: #fff;
+        }
+
+        .padded {
+            margin: 300px;
+        }
+
+        .error-block {
+            width: 600px;
+            margin: auto;
+        }
+
+        .error-image {
+            display: inline-block;
+        }
+
+        img {
+            width: 100px;
+        }
+
+        .error-message {
+            width: 500px;
+            display: inline-block;
+            position: absolute;
+            margin-left: 15px;
+            color: rgb(66, 82, 110);
+        }
+
+        h1 {
+            font-weight: bold;
+            color: rgb(66, 82, 110);
+        }
+
+        p {
+            font-size: 18px;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+    <div class="padded">
+        <div class="error-block">
+            <div class="error-image">
+                <img src="/image/error.png">
+            </div>
+            <div class="error-message">
+                <h1>({{error.code}}) {{error.type}}</h1>
+                <p>{{error.message}}</p>
+                <p>{{error.description}}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
