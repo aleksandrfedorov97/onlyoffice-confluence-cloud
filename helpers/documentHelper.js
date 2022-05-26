@@ -78,6 +78,13 @@ documentHelper.getEditorConfig = async function (addon, clientKey, localBaseUrl,
     let mode = "view";
     let callbackUrl = null;
 
+    let permissionEdit = false;
+    for(var i in attachmentInfo.operations) {
+        if (attachmentInfo.operations[i].targetType == "attachment" && attachmentInfo.operations[i].operation == operation) {
+            permissionEdit = true;
+        }
+    }
+
     if (permissionEdit && documentHelper.isEditable(fileType)) {
         mode = "edit";
         callbackUrl = await urlHelper.getCallbackUrl(addon, localBaseUrl, clientKey, userInfo.accountId, attachmentInfo.container.id, attachmentInfo.id);

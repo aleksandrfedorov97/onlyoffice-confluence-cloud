@@ -100,16 +100,6 @@ function getUserInfo(httpClient, userAccountId) {
     });
 }
 
-function checkPermissions(operations, operation) {
-    for(var i in operations) {
-        if (operations[i].targetType == "attachment" && operations[i].operation == operation) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData) {
     return new Promise((resolve, reject) => {
         httpClient.asUserByAccountId(userAccountId).post({
@@ -164,7 +154,6 @@ module.exports = {
     setAppProperty,
     getAttachmentInfo,
     getUserInfo,
-    checkPermissions,
     updateContent,
     getUriDownloadAttachment,
     getFileDataFromUrl

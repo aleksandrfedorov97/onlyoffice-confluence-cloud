@@ -6,7 +6,6 @@ const {
     setAppProperty,
     getAttachmentInfo,
     getUserInfo,
-    checkPermissions,
     updateContent,
     getUriDownloadAttachment,
     getFileDataFromUrl
@@ -100,8 +99,6 @@ export default function routes(app, addon) {
                 );
                 return;
             } 
-
-            let permissionEdit = checkPermissions(attachmentInfo.operations, "update"); //ToDo: to getConfig
 
             let editorConfig = await documentHelper.getEditorConfig(addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit);
 
