@@ -80,7 +80,7 @@ documentHelper.getEditorConfig = async function (addon, clientKey, localBaseUrl,
 
     let permissionEdit = false;
     for(var i in attachmentInfo.operations) {
-        if (attachmentInfo.operations[i].targetType == "attachment" && attachmentInfo.operations[i].operation == operation) {
+        if (attachmentInfo.operations[i].targetType == "attachment" && attachmentInfo.operations[i].operation == "update") {
             permissionEdit = true;
         }
     }
