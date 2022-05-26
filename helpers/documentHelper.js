@@ -72,7 +72,7 @@ documentHelper.getDocumentKey = function (attachmentId, updateTime) {
     return Buffer.from(attachmentId + "_" + Date.parse(updateTime)).toString('base64');
 }
 
-documentHelper.getEditorConfig = async function (addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit) {
+documentHelper.getEditorConfig = async function (addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo) {
 
     const fileType = documentHelper.getFileExtension(attachmentInfo.title);
     let mode = "view";
