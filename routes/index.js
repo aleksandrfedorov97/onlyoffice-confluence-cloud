@@ -100,7 +100,14 @@ export default function routes(app, addon) {
                 return;
             } 
 
-            let editorConfig = await documentHelper.getEditorConfig(addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo, permissionEdit);
+            const editorConfig = await documentHelper.getEditorConfig(
+                addon, 
+                clientKey, 
+                localBaseUrl, 
+                hostBaseUrl, 
+                attachmentInfo, 
+                userInfo
+            );
 
             const jwtSecret = await getJwtSecret(addon, httpClient);
 
