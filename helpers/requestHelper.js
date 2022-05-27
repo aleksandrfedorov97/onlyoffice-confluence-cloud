@@ -142,12 +142,16 @@ function getUriDownloadAttachment(httpClient, userAccountId, pageId, attachmentI
                 attachmentId
             )}/download`
         }, function(err, response, body) {
-            if (err) {
-                reject(err);
-                return;
+            if (response.statusCode == 200) {
+                resolve(response.request.uri.href);
+            } else {
+                reject({
+                    method: "getUriDownloadAttachment",
+                    code: response.statusCode,
+                    type: response.statusMessage,
+                    message: body.message ? body.message : body,
+                });
             }
-
-            resolve(response.request.uri.href);
         });
     });
 }

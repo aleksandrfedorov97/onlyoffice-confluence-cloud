@@ -1,6 +1,7 @@
 import * as jwt from 'atlassian-jwt';
 const documentHelper = require("../helpers/documentHelper.js");
 const urlHelper = require("../helpers/urlHelper.js");
+const util = require("util");
 
 const {
     setAppProperty,
@@ -164,7 +165,10 @@ export default function routes(app, addon) {
 
         const queryToken = req.query.token;
 
+        addon.logger.info(`Request to download file:\n${util.inspect({ queryToken: queryToken })}`);
+
         if (!queryToken) {
+            addon.logger.warn("Query token not found");
             res.status(400).send("Query token not found");
             return;
         }
@@ -173,51 +177,48 @@ export default function routes(app, addon) {
         try {
             context = await verifyQueryToken(addon, queryToken, "download");
         } catch (error) {
+            addon.logger.warn(`Invalid query token: ${error.message}`);
             res.status(401).send(`Invalid query token: ${error.message}`);
             return;
         }
+
+        addon.logger.info(`Context from queryToken:\n${util.inspect(context)}`);
 
         var httpClient = addon.httpClient({
             clientKey: context.clientKey
         });
 
-        const jwtSecret = await getJwtSecret(addon, httpClient);
+        try {
+            const jwtSecret = await getJwtSecret(addon, httpClient);
 
-        if (jwtSecret) {
-            const jwtHeader = await getJwtHeader(addon, httpClient);
-            const authHeader = req.headers[jwtHeader.toLowerCase()];
-            const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+            if (jwtSecret) {
+                const jwtHeader = await getJwtHeader(addon, httpClient);
+                const authHeader = req.headers[jwtHeader.toLowerCase()];
+                const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (!token) {
-                res.status(401).send("Could not find authentication data on request");
-                return;
+                if (!token) {
+                    addon.logger.warn("Could not find authentication data on request");
+                    res.status(401).send("Could not find authentication data on request");
+                    return;
+                }
+
+                try {
+                    var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
+                } catch (error) {
+                    addon.logger.warn(`Invalid JWT: ${error.message}`);
+                    res.status(401).send(`Invalid JWT: ${error.message}`);
+                    return;
+                }
             }
 
-            try {
-                var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
-            } catch (error) {
-                res.status(401).send(`Invalid JWT: ${error.message}`);
-                return;
-            }
+            const uri = await getUriDownloadAttachment(httpClient, context.userId, context.pageId, context.attachmentId);
+
+            res.setHeader("location", uri);
+            res.status(302).send();
+        } catch (error) {
+            addon.logger.warn(`Error download file:\n${util.inspect(error)}`);
+            res.status(error.code || 500).send(error.message || "Undefined error.");
         }
-
-        // let canRead;
-        // try {
-        //     canRead = await checkPermissions(httpClient, context.userId, context.attachmentId, "read");
-        // } catch (error) {
-        //     res.status(403).send(error);
-        //     return;
-        // }
-
-        // if (!canRead) {
-        //     res.status(403).send("Forbidden: you don't have access to this content");
-        //     return;
-        // }
-
-        const uri = await getUriDownloadAttachment(httpClient, context.userId, context.pageId, context.attachmentId);
-
-        res.setHeader("location", uri);
-        res.status(302).send();
     });
 
     app.post('/onlyoffice-callback', async (req, res) => {
