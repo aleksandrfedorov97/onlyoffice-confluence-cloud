@@ -3,7 +3,9 @@ const axios = require("axios");
 function getAppProperty(httpClient, propertyKey) {
     return new Promise((resolve, reject) => {
         httpClient.get({
-            url: `/rest/atlassian-connect/1/addons/onlyoffice-confluence-cloud/properties/${propertyKey}`,
+            url: `/rest/atlassian-connect/1/addons/onlyoffice-confluence-cloud/properties/${encodeURIComponent(
+                propertyKey
+            )}`,
             json: true
         }, function(err, response, body) {
             if (response.statusCode == 200) {
@@ -28,7 +30,9 @@ function getAppProperty(httpClient, propertyKey) {
 function setAppProperty(httpClient, propertyKey, value) {
     return new Promise((resolve, reject) => {
         httpClient.put({
-            url: `/rest/atlassian-connect/1/addons/onlyoffice-confluence-cloud/properties/${propertyKey}`,
+            url: `/rest/atlassian-connect/1/addons/onlyoffice-confluence-cloud/properties/${encodeURIComponent(
+                propertyKey
+            )}`,
             json: value
         }, function(err, response, body) {
             if (response.statusCode == 200) {
@@ -86,7 +90,7 @@ function getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId, atta
 function getUserInfo(httpClient, userAccountId) {
     return new Promise((resolve, reject) => {
         httpClient.get({
-            url: `/rest/api/user?accountId=${userAccountId}`,
+            url: `/rest/api/user?accountId=${encodeURIComponent(userAccountId)}`,
             json: true
         }, function(err, response, body) {
             if (response.statusCode == 200) {
@@ -114,7 +118,11 @@ function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData
             multipartFormData: {
                 file: [fileData],
             },
-            url: `/rest/api/content/${pageId}/child/attachment/${attachmentId}/data`
+            url: `/rest/api/content/${encodeURIComponent(
+                pageId
+            )}/child/attachment/${encodeURIComponent(
+                attachmentId
+            )}/data`
         }, function(err, response, body) {
             if (err) {
                 reject(err);
@@ -128,7 +136,11 @@ function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData
 function getUriDownloadAttachment(httpClient, userAccountId, pageId, attachmentId) {
     return new Promise((resolve, reject) => {
         httpClient.asUserByAccountId(userAccountId).get({
-            url: `/rest/api/content/${pageId}/child/attachment/${attachmentId}/download`
+            url: `/rest/api/content/${encodeURIComponent(
+                pageId
+            )}/child/attachment/${encodeURIComponent(
+                attachmentId
+            )}/download`
         }, function(err, response, body) {
             if (err) {
                 reject(err);
