@@ -124,11 +124,16 @@ function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData
                 attachmentId
             )}/data`
         }, function(err, response, body) {
-            if (err) {
-                reject(err);
-                return;
+            if (response.statusCode == 200) {
+                resolve(body);
+            } else {
+                reject({
+                    method: "updateContent",
+                    code: response.statusCode,
+                    type: response.statusMessage,
+                    message: body.message ? body.message : body,
+                });
             }
-            resolve();
         });
     });
 }

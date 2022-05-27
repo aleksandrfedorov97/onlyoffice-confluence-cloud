@@ -224,7 +224,10 @@ export default function routes(app, addon) {
 
         const queryToken = req.query.token;
 
+        addon.logger.info(`Callback request:\n${util.inspect({ queryToken: queryToken })}`);
+
         if (!queryToken) {
+            addon.logger.warn("Query token not found");
             res.status(400).send("Query token not found");
             return;
         }
@@ -233,13 +236,17 @@ export default function routes(app, addon) {
         try {
             context = await verifyQueryToken(addon, queryToken, "callback");
         } catch (error) {
+            addon.logger.warn(`Invalid query token: ${error.message}`);
             res.status(401).send(`Invalid query token: ${error.message}`);
             return;
         }
 
+        addon.logger.info(`Context from queryToken:\n${util.inspect(context)}`);
+
         let body = req.body;
 
         if (!body) {
+            addon.logger.warn("Request body not found");
             res.status(400).send("Request body not found");
             return;
         }
@@ -248,57 +255,55 @@ export default function routes(app, addon) {
             clientKey: context.clientKey
         });
 
-        const jwtSecret = await getJwtSecret(addon, httpClient);
+        try {
+            const jwtSecret = await getJwtSecret(addon, httpClient);
 
-        if (jwtSecret) {
-            let token = body.token;
-            let tokenFromHeader = false;
+            if (jwtSecret) {
+                let token = body.token;
+                let tokenFromHeader = false;
 
-            if (!token) {
-                const jwtHeader = await getJwtHeader(addon, httpClient);
-                const authHeader = req.headers[jwtHeader.toLowerCase()];
-                token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-                tokenFromHeader = true;
+                if (!token) {
+                    const jwtHeader = await getJwtHeader(addon, httpClient);
+                    const authHeader = req.headers[jwtHeader.toLowerCase()];
+                    token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+                    tokenFromHeader = true;
+                }
+
+                if (!token) {
+                    addon.logger.warn("Could not find authentication data on request");
+                    res.status(401).send("Could not find authentication data on request");
+                    return;
+                }
+
+                try {
+                    var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
+
+                    body = tokenFromHeader ? bodyFromToken.payload : bodyFromToken;
+                } catch (error) {
+                    addon.logger.warn(`Invalid JWT: ${error.message}`);
+                    res.status(401).send(`Invalid JWT: ${error.message}`);
+                    return;
+                }
             }
 
-            if (!token) {
-                res.status(401).send("Could not find authentication data on request");
+            addon.logger.info(`Callback status: ${body.status}`);
+               
+            if (body.status == 2 || body.status == 3) { // MustSave, Corrupted
+
+                const userAccountId = body.actions[0].userid;
+                const pageId = context.pageId;
+                const attachmentId = context.attachmentId;
+
+                const fileData = await getFileDataFromUrl(body.url);
+                const attachmentInfo = await updateContent(httpClient, userAccountId, pageId, attachmentId, fileData);
+            } else if (body.status == 6 || body.status == 7) { // MustForceSave, CorruptedForceSave
+                addon.logger.warn("Force save is not supported");
+                res.json({ error: 1, message: "Force save is not supported"});
                 return;
             }
-
-            try {
-                var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
-
-                body = tokenFromHeader ? bodyFromToken.payload : bodyFromToken;
-            } catch (error) {
-                res.status(401).send(`Invalid JWT: ${error.message}`);
-                return;
-            }
-        }
-
-        if (body.status == 1) {
-
-        } else if (body.status == 2 || body.status == 3) { // MustSave, Corrupted
-            const userAccountId = body.actions[0].userid;
-            const pageId = context.pageId;
-            const attachmentId = context.attachmentId;
-
-            // let permissionEdit;
-            // try {
-            //     permissionEdit = await checkPermissions(httpClient, context.userId, context.attachmentId, "update");
-            // } catch (error) {
-            //     res.status(403).send(error);    //ToDo warn log
-            // }
-            
-            if (!permissionEdit) {
-                res.status(403).send("Forbidden: you don't have access to edit this content");
-                return;
-            }
-
-            const fileData = await getFileDataFromUrl(body.url);
-            const error = await updateContent(httpClient, userAccountId, pageId, attachmentId, fileData);
-        } else if (body.status == 6 || body.status == 7) { // MustForceSave, CorruptedForceSave
-            res.json({ error: 1, message: "Force save is not supported"});
+        } catch (error) {
+            addon.logger.warn(`Callback request error:\n${util.inspect(error)}`);
+            res.json({ error: 1, message: error.message || "Undefined error." });
             return;
         }
 
