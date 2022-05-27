@@ -72,6 +72,16 @@ export default function routes(app, addon) {
         const attachmentId = req.query.attachmentId;
         const attachmentName = req.query.attachmentName;
 
+        addon.logger.info(`Request to generate a configuration to open the editor:
+        {
+            clientKey: ${clientKey},
+            hostBaseUrl: ${hostBaseUrl},
+            userAccountId: ${userAccountId},
+            pageId: ${pageId},
+            attachmentId: ${attachmentId},
+            attachmentName: ${attachmentName}
+        }`);
+
         if (!pageId || !attachmentId || !attachmentName) {
             addon.logger.warn("Not found requested paremeters (pageId, attachmentId, attachmentName)");
             sendError(
@@ -93,6 +103,7 @@ export default function routes(app, addon) {
             const documentType = documentHelper.getDocumentType(fileType);
 
             if (!documentType) {
+                addon.logger.warn(`Unsupported MediaType: this file format is not supported (${fileType})`);
                 sendError(
                     415, 
                     "Unsupported MediaType",
