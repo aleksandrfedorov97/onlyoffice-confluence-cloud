@@ -26,23 +26,38 @@ export default function routes(app, addon) {
     });
 
     app.get('/configure', [addon.authenticate(), addon.authorizeConfluence({ application: ["administer"] })], async (req, res) => {
-        const httpClient = addon.httpClient(req);
+        
+        try {
+            const httpClient = addon.httpClient(req);
 
-        const context = {
-            title: "ONLYOFFICE",
-            docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient),
-            jwtSecret: await getJwtSecret(addon, httpClient),
-            jwtHeader: await getJwtHeader(addon, httpClient)
-        };
+            const context = {
+                title: "ONLYOFFICE",
+                docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient),
+                jwtSecret: await getJwtSecret(addon, httpClient),
+                jwtHeader: await getJwtHeader(addon, httpClient)
+            };
 
-        res.render(
-            'configure.hbs',
-            context
-        );
+            res.render(
+                'configure.hbs',
+                context
+            );
+        } catch (error) {
+            addon.logger.warn(error);
+            res.render(
+                'error.hbs',
+                {
+                    error: {
+                        code: error.code || 500, 
+                        type: error.type || "Undefined error",
+                        message: error.message || "",
+                        description: error.description || ""
+                    }
+                }
+            );
+        }
     });
 
     app.post('/configure', [addon.authenticate(true), addon.authorizeConfluence({ application: ["administer"] })], async (req, res) => {
-        const httpClient = addon.httpClient(req);
 
         if (!req.body.docApiUrl || !req.body.jwtSecret || !req.body.jwtSecret) {
             res.status(400).send();
@@ -50,6 +65,8 @@ export default function routes(app, addon) {
         }
 
         try {
+            const httpClient = addon.httpClient(req);
+
             let docApiUrl = setAppProperty(httpClient, "docApiUrl", req.body.docApiUrl);
             let jwtSecret = setAppProperty(httpClient, "jwtSecret", req.body.jwtSecret);
             let jwtHeader = setAppProperty(httpClient, "jwtHeader", req.body.jwtHeader);
