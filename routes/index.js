@@ -61,7 +61,7 @@ export default function routes(app, addon) {
         }
     });
 
-    app.get('/onlyoffice-editor', addon.authenticate(), async (req, res) => {
+    app.get('/editor', addon.authenticate(), async (req, res) => {
 
         const userAccountId = req.context.userAccountId;
         const localBaseUrl = req.context.localBaseUrl;
@@ -117,7 +117,7 @@ export default function routes(app, addon) {
             }
 
             res.render(
-                'onlyoffice-editor.hbs',
+                'editor.hbs',
                 {
                     editorConfig: JSON.stringify(editorConfig),
                     docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient)

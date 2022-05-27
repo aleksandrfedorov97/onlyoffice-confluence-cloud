@@ -20,11 +20,11 @@
     "modules": {
         "generalPages": [
             {
-                "key": "onlyoffice-editor",
+                "key": "editor",
                 "name": {
                     "value": "ONLYOFFICE Editor"
                 },
-                "url": "/onlyoffice-editor?pageId={page.id}&attachmentId={attachment.id}&attachmentName={attachment.name}"
+                "url": "/editor?pageId={page.id}&attachmentId={attachment.id}&attachmentName={attachment.name}"
             }
         ],
         "webItems": [
@@ -33,7 +33,7 @@
                 "name": {
                     "value": "Edit in ONLYOFFICE"
                 },
-                "url": "onlyoffice-editor",
+                "url": "editor",
                 "location": "system.attachment",
                 "context": "page",
                 "conditions": [
@@ -51,7 +51,7 @@
                 "name": {
                     "value": "View in ONLYOFFICE"
                 },
-                "url": "onlyoffice-editor",
+                "url": "editor",
                 "location": "system.attachment",
                 "context": "page",
                 "conditions": [
