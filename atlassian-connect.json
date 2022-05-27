@@ -24,7 +24,7 @@
                 "name": {
                     "value": "ONLYOFFICE Editor"
                 },
-                "url": "/onlyoffice-editor?pageId={page.id}&attachmentId={attachment.id}"
+                "url": "/onlyoffice-editor?pageId={page.id}&attachmentId={attachment.id}&attachmentName={attachment.name}"
             }
         ],
         "webItems": [

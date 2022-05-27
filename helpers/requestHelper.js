@@ -46,10 +46,14 @@ function setAppProperty(httpClient, propertyKey, value) {
     });
 }
 
-function getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId) {
+function getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId, attachmentName) {
     return new Promise((resolve, reject) => {
         httpClient.asUserByAccountId(userAccountId).get({
-            url: `/rest/api/content/${pageId}/child/attachment?expand=history.lastUpdated,container,operations&limit=999999999`,
+            url: `/rest/api/content/${encodeURIComponent(
+                pageId
+            )}/child/attachment?expand=history.lastUpdated,container,operations&filename=${encodeURIComponent(
+                attachmentName
+            )}&limit=999999999`,
             json: true
         }, function(err, response, body) {
             if (response.statusCode == 200) {
@@ -73,7 +77,7 @@ function getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId) {
                 code: 404,
                 type: "Not found",
                 message: "Error getting attachment information.",
-                description: `Not found attachment with id: ${attachmentId}.`
+                description: `Not found attachment with id: ${attachmentId}, name: ${attachmentId}.`
             });
         });
     });

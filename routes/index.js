@@ -70,14 +70,15 @@ export default function routes(app, addon) {
 
         const pageId = req.query.pageId;
         const attachmentId = req.query.attachmentId;
+        const attachmentName = req.query.attachmentName;
 
-        if (!pageId || !attachmentId) {
-            addon.logger.warn("Not found requested paremeters (pageId or attachmentId)");
+        if (!pageId || !attachmentId || !attachmentName) {
+            addon.logger.warn("Not found requested paremeters (pageId, attachmentId, attachmentName)");
             sendError(
                 404, 
                 "Not found",
                 "Attachment not found.",
-                "Not found requested paremeters (pageId or attachmentId)."
+                "Not found requested paremeters (pageId, attachmentId, attachmentName)."
             );
             return;
         }
@@ -86,7 +87,7 @@ export default function routes(app, addon) {
             const httpClient = addon.httpClient(req);
 
             const userInfo = await getUserInfo(httpClient, userAccountId);
-            const attachmentInfo = await getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId); //ToDo: fileName
+            const attachmentInfo = await getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId, attachmentName);
 
             const fileType = documentHelper.getFileExtension(attachmentInfo.title);
             const documentType = documentHelper.getDocumentType(fileType);
