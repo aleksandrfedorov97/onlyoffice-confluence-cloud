@@ -21,7 +21,7 @@ urlHelper.getFileUrl = async function (addon, localBaseUrl, clientKey, userAccou
         }
     );
 
-    return localBaseUrl + "onlyoffice-download?token=" + token;
+    return appendSlash(localBaseUrl) + "onlyoffice-download?token=" + token;
 }
 
 urlHelper.getCallbackUrl = async function (addon, localBaseUrl, clientKey, userAccountId, pageId, attachmentId) {
@@ -37,11 +37,11 @@ urlHelper.getCallbackUrl = async function (addon, localBaseUrl, clientKey, userA
         }
     );
 
-    return localBaseUrl + "onlyoffice-callback?token=" + token;
+    return appendSlash(localBaseUrl) + "onlyoffice-callback?token=" + token;
 }
 
 urlHelper.getGoBackUrl = function (hostBaseUrl, pageId) {
-    var url = hostBaseUrl + "/pages/viewpageattachments.action";
+    var url = appendSlash(hostBaseUrl) + "pages/viewpageattachments.action";
     url = url + "?pageId=" + pageId;
     return url;
 }
@@ -49,7 +49,11 @@ urlHelper.getGoBackUrl = function (hostBaseUrl, pageId) {
 urlHelper.getDocApiUrl = async function (addon, httpClient) {
     const docApiUrl = await getAppProperty(httpClient, "docApiUrl");
 
-    return docApiUrl ? docApiUrl : addon.config.docServer().default.adress;
+    return appendSlash(docApiUrl || addon.config.docServer().default.adress);
+}
+
+function appendSlash (url) {
+    return url.replace(/\/$|$/, '/');
 }
 
 module.exports = urlHelper;
