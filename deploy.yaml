@@ -58,6 +58,7 @@ metadata:
 type: Opaque
 stringData:
   CONFLUENCE_DB_HOST: postgresql
+  CONFLUENCE_DB_NAME: confluencecloud
   DB_USER_NAME: confluencecloud
   DB_USER_PWD: confluence_secret_password
 
