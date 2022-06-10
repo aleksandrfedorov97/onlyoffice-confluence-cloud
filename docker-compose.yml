@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  confluence-cloud:
+    build:
+      context: .
+      target: confluence-cloud
+    image: onlyoffice/confluence-cloud:${PRODUCT_VERSION}
+    container_name: onlyoffice-confluence-cloud
+    environment:
+      - AC_OPTS=${AC_OPTS}
+    stdin_open: true
+    restart: always
+    ports:
+      - '3000:3000'
+
+  postgresql:
+    image: postgres
+    container_name: postgresql
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    stdin_open: true
+    restart: always
+    expose:
+      - '5432'
+
+networks:
+  default:
+    name: onlyoffice
