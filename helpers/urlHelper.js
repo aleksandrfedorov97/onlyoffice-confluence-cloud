@@ -52,7 +52,7 @@ urlHelper.getDocApiUrl = async function (addon, httpClient) {
     return appendSlash(docApiUrl || addon.config.docServer().default.adress);
 }
 
-function appendSlash (url) {
+function appendSlash(url) {
     return url.replace(/\/$|$/, '/');
 }
 

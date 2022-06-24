@@ -43,11 +43,11 @@ export default function routes(app, addon) {
             );
         } catch (error) {
             addon.logger.warn(error);
+            res.status(500);
             res.render(
                 'error.hbs',
                 {
                     error: {
-                        code: error.code || 500, 
                         type: error.type || "Undefined error",
                         message: error.message || "",
                         description: error.description || ""
@@ -101,8 +101,8 @@ export default function routes(app, addon) {
 
         if (!pageId || !attachmentId || !attachmentName) {
             addon.logger.warn("Not found requested paremeters (pageId, attachmentId, attachmentName)");
+            res.status(404);
             sendError(
-                404, 
                 "Not found",
                 "Attachment not found.",
                 "Not found requested paremeters (pageId, attachmentId, attachmentName)."
@@ -121,10 +121,12 @@ export default function routes(app, addon) {
 
             if (!documentType) {
                 addon.logger.warn(`Unsupported MediaType: this file format is not supported (${fileType})`);
+                res.status(415);
                 sendError(
-                    415, 
                     "Unsupported MediaType",
-                    `Sorry, this file format is not supported (${fileType})`
+                    `Sorry, this file format is not supported (${attachmentInfo.title})`,
+                    null,
+                    hostBaseUrl + attachmentInfo._links.download
                 );
                 return;
             } 
@@ -153,8 +155,8 @@ export default function routes(app, addon) {
             );
         } catch (error) {
             addon.logger.warn(error);
+            res.status(error.code || 500);
             sendError(
-                error.code || 500,
                 error.type || "Undefined error",
                 error.message || "An unexpected error occurred while opening the document.",
                 error.description || ""
@@ -162,15 +164,15 @@ export default function routes(app, addon) {
             return;
         }
 
-        function sendError(code, type, message, description) {
+        function sendError(type, message, description, link) {
             res.render(
                 'error.hbs',
                 {
                     error: {
-                        code: code, 
                         type: type,
                         message: message,
-                        description: description
+                        description: description,
+                        link: link
                     }
                 }
             );

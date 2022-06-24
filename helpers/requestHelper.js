@@ -171,7 +171,7 @@ async function getFileDataFromUrl(url) {
         url: url,
     });
 
-    return file.data; //ToDo : check exception
+    return file.data;
 }
 
 module.exports = {
