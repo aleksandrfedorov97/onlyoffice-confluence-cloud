@@ -1,12 +1,12 @@
 FROM node:14-alpine AS confluence-cloud
 LABEL maintainer Ascensio System SIA <support@onlyoffice.com>
-ARG AC_OPTS
-ENV AC_OPTS=$AC_OPTS
+ENV NODE_ENV=production \
+    AC_OPTS=no_reg \
+    PORT=3000
 WORKDIR /usr/src/app
 COPY ./package*.json ./
-RUN echo "AC_OPTS=$AC_OPTS" >> /usr/src/app/.env && \
-    npm install && \
+RUN npm install && \
     npm install pg --save
 COPY . .
-EXPOSE 3000
+EXPOSE $PORT
 CMD [ "npm", "start" ]
