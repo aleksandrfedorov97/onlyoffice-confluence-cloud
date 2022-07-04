@@ -130,20 +130,21 @@ data:
   config.json: |-
     {
         "development": {
-            "localBaseUrl": "https://onlyoffice-confluence-cloud.example.com",
-            "port": 3000,
+            "port": "$PORT",
             "errorTemplate": true,
             "store": {
                 "adapter": "sequelize",
-                "dialect": "postgres",
-                "url": "postgres://user:password@postgresql:5432/db_name"
+                "dialect": "sqlite3",
+                "logging": false,
+                "type": "memory"
             },
         },
         "production": {
             "port": "$PORT",
             "errorTemplate": true,
-            "localBaseUrl": "https://onlyoffice-confluence-cloud.example.com",
+            "localBaseUrl": "$AC_LOCAL_BASE_URL",
             "store": {
+                "adapter": "sequelize",
                 "type": "postgres",
                 "url": "$DATABASE_URL"
             },
@@ -171,6 +172,9 @@ metadata:
   name: confluence-cloud-env
 data:
   AC_OPTS: no-reg
+  NODE_ENV: production
+  AC_LOCAL_BASE_URL: https://onlyoffice-confluence-cloud.example.com
+  DATABASE_URL: postgres://user:password@postgresql:5432/db_name
 
 ---
 apiVersion: v1
