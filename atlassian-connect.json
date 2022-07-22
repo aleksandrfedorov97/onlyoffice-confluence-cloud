@@ -3,6 +3,10 @@
     "name": "Confluence cloud ONLYOFFICE integration app",
     "description": "Confluence ONLYOFFICE integration app allows you to work on all kinds of office documents within Confluence using ONLYOFFICE Online Editors with the enhanced formatting toolset. View and co-edit the documents in real-time.",
     "baseUrl": "{{localBaseUrl}}",
+    "vendor": {
+        "name": "Ascensio System SIA",
+        "url": "https://www.onlyoffice.com"
+    },
     "authentication": {
         "type": "jwt"
     },
