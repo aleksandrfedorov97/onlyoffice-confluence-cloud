@@ -21,6 +21,11 @@
     "apiMigrations":{
         "signed-install": true
     },
+    "translations": {
+        "paths": {
+            "ru-RU": "/i18n/ru_RU.json"
+        }
+    },
     "modules": {
         "generalPages": [
             {
@@ -35,7 +40,8 @@
             {
                 "key": "web-item-onlyoffice-edit",
                 "name": {
-                    "value": "Edit in ONLYOFFICE"
+                    "value": "Edit in ONLYOFFICE",
+                    "i18n": "onlyoffice.editor.link.edit"
                 },
                 "url": "editor",
                 "location": "system.attachment",
@@ -53,7 +59,8 @@
             {
                 "key": "web-item-onlyoffice-view",
                 "name": {
-                    "value": "View in ONLYOFFICE"
+                    "value": "View in ONLYOFFICE",
+                    "i18n": "onlyoffice.editor.link.view"
                 },
                 "url": "editor",
                 "location": "system.attachment",
@@ -79,7 +86,8 @@
         "configurePage": {
             "url": "/configure",
             "name": {
-              "value": "ONLYOFFICE Configuration"
+              "value": "ONLYOFFICE Configuration",
+              "i18n": "onlyoffice.configuration.title"
             },
             "key": "configure"
         }
