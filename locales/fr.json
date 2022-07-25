@@ -2,9 +2,9 @@
     "Server settings": "Paramètres du serveur",
     "Document Editing Service address": "Adresse du service d'édition de documents",
     "Secret key": "Clé secrète",
-    "Authorization header": "",
+    "Authorization header": "En-tête d'autorisation",
     "Save": "Enregistrer",
-    "Successfully saved the configuration": "",
-    "Error saving configuration": "",
-    "ONLYOFFICE cannot be reached. Please contact admin.": "ONLYOFFICE est indisponible. Veuillez contacter votre administrateur."
+    "Successfully saved the configuration": "La configuration a été enregistrée avec succès",
+    "Error saving configuration": "Erreur d'enregistrement de la configuration",
+    "ONLYOFFICE cannot be reached. Please contact admin.": "ONLYOFFICE ne peut être atteint. Veuillez contacter l'administration."
 }

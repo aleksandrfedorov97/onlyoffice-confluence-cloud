@@ -1,10 +1,10 @@
 {
-    "Server settings": "Impostazioni del server",
-    "Document Editing Service address": "Indirizzo del servizio di modifica documenti",
+    "Server settings": "Impostazioni server",
+    "Document Editing Service address": "Indirizzo del Servizio di modifica documenti",
     "Secret key": "Chiave segreta",
-    "Authorization header": "",
-    "Save": "Salva",
-    "Successfully saved the configuration": "",
-    "Error saving configuration": "",
-    "ONLYOFFICE cannot be reached. Please contact admin.": "Non è possibile raggiungere ONLYOFFICE. Si prega di contattare lƚmministratore."
+    "Authorization header": "Intestazione di autorizzazione",
+    "Save": "Salvare",
+    "Successfully saved the configuration": "Configurazione salvata con successo",
+    "Error saving configuration": "Errore nel salvataggio della configurazione",
+    "ONLYOFFICE cannot be reached. Please contact admin.": "ONLYOFFICE non può essere raggiunto. Ti preghiamo di contattare l'amministratore."
 }
