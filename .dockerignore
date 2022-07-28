@@ -1,2 +1,9 @@
+.vscode
+.env
 node_modules
 npm-debug.log
+hooks
+Dockerfile
+credentials.json
+docker-compose.yml
+deploy.yaml
