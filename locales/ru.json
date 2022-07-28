@@ -1,0 +1,10 @@
+{
+    "Server settings": "Настройки сервера",
+    "Document Editing Service address": "Адрес службы редактирования документов",
+    "Secret key": "Секретный ключ",
+    "Authorization header": "Заголовок авторизации",
+    "Save": "Сохранить",
+    "Successfully saved the configuration": "Конфигурация сохранена успешно",
+    "Error saving configuration": "Ошибка сохранения конфигурации",
+    "ONLYOFFICE cannot be reached. Please contact admin.": "Приложение ONLYOFFICE недоступно. Пожалуйста, свяжитесь с администратором."
+}

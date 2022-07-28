@@ -1,0 +1,10 @@
+{
+    "Server settings": "Configuración del servidor",
+    "Document Editing Service address": "Dirección del Servicio de edición de documentos",
+    "Secret key": "Clave secreta",
+    "Authorization header": "Encabezado de autenticación",
+    "Save": "Guardar",
+    "Successfully saved the configuration": "La configuración se ha guardado correctamente",
+    "Error saving configuration": "Error al guardar la configuración",
+    "ONLYOFFICE cannot be reached. Please contact admin.": "No se puede establecer contacto con ONLYOFFICE. Por favor, póngase en contacto con el administrador."
+}

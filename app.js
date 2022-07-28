@@ -41,6 +41,7 @@ import path from 'path';
 import os from 'os';
 import helmet from 'helmet';
 import nocache from 'nocache';
+import i18n from 'i18n';
 
 // Routes live here; this is the C in MVC
 import routes from './routes';
@@ -59,8 +60,19 @@ const devEnv = app.get('env') === 'development';
 app.use(morgan(devEnv ? 'dev' : 'combined'));
 
 // Configure Handlebars
+i18n.configure({
+    locales: ['en', 'ru'],
+    defaultLocale: 'en',
+    cookie: 'locale',
+    directory: __dirname + "/locales"
+});
+
 const viewsDir = path.join(__dirname, 'views');
-const handlebarsEngine = hbs.express4({partialsDir: viewsDir});
+const handlebarsEngine = hbs.express4({
+    partialsDir: viewsDir,
+    i18n: i18n
+});
+
 app.engine('hbs', handlebarsEngine);
 app.set('view engine', 'hbs');
 app.set('views', viewsDir);
@@ -83,6 +95,8 @@ app.use(helmet.referrerPolicy({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
+
+app.use(i18n.init);
 
 // Gzip responses when appropriate
 app.use(compression());

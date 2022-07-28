@@ -33,25 +33,25 @@
                 <input type="hidden" name="atl_token" value="{{token}}">
                 <legend>
                     <div class="header">
-                        <h2 id="serverSettings">Server settings</h2>
+                        <h2 id="serverSettings">{{__ "Server settings"}}</h2>
                     </div>
                 </legend>
                 <div class="field-group">
-                    <label for="docApiUrl">Document Editing Service address</label>
+                    <label for="docApiUrl">{{__ "Document Editing Service address"}}</label>
                     <input type="text" name="docApiUrl" id="docApiUrl" value="{{docApiUrl}}" class="text" required>
                 </div>
                 <div class="field-group">
-                    <label for="jwtSecret">Secret key</label>
+                    <label for="jwtSecret">{{__ "Secret key"}}</label>
                     <input type="text" name="jwtSecret" id="jwtSecret" value="{{jwtSecret}}" class="text" required>
                 </div>
                 <div class="field-group">
-                    <label for="jwtHeader">JWT Header</label>
+                    <label for="jwtHeader">{{__ "Authorization header"}}</label>
                     <input type="text" name="jwtHeader" id="jwtHeader" value="{{jwtHeader}}" class="text" required>
                 </div>
 
                 <div class="buttons-container">
                     <div class="buttons">
-                        <input id="saveButton" class="submit aui-button " type="submit" name="saveButton" value="Save">
+                        <input id="saveButton" class="submit aui-button " type="submit" name="saveButton" value="{{__ "Save"}}">
                     </div>
                 </div>
             </form>
@@ -80,14 +80,14 @@
                     success: function (response) {
                         if (lastMsg) lastMsg.remove();
                         lastMsg = AJS.messages.success({
-                                    body: "Successfully saved the configuration"
+                                    body: "{{__ "Successfully saved the configuration"}}"
                                 });
                         saveButton.attr("disabled", false);
                     },
                     error: function (response) {
                         if (lastMsg) lastMsg.remove();
                         lastMsg = AJS.messages.error({
-                                    body: "Error saving configuration"
+                                    body: "{{__ "Error saving configuration"}}"
                                 });
                         saveButton.attr("disabled", false);
                     }
