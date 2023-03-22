@@ -41,6 +41,10 @@ export default function routes(app, addon) {
         res.redirect('/atlassian-connect.json');
     });
 
+    app.get('/healthcheck', (req, res) => {
+        res.status(200).send();
+    });
+
     app.get('/configure', [addon.authenticate(), addon.authorizeConfluence({ application: ["administer"] })], async (req, res) => {
         
         try {
