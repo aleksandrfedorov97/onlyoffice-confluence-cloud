@@ -24,7 +24,7 @@ function getAppProperty(httpClient, propertyKey) {
             )}`,
             json: true
         }, function(err, response, body) {
-            if (response.statusCode == 200) {
+            if (response.statusCode == 200 || response.statusCode == 404) {
                 if (body.value === undefined || body.value == "") {
                     resolve(null);
                 }
