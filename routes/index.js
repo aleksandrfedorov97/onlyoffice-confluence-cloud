@@ -90,7 +90,7 @@ export default function routes(app, addon) {
             let docApiUrl = setAppProperty(httpClient, "docApiUrl", req.body.docApiUrl);
             let jwtSecret = setAppProperty(httpClient, "jwtSecret", req.body.jwtSecret);
             let jwtHeader = setAppProperty(httpClient, "jwtHeader", req.body.jwtHeader);
-            Promise.all([docApiUrl, jwtSecret, jwtHeader]).then(values => {
+            Promise.all([docApiUrl, jwtSecret, jwtHeader]).then(() => {
                 res.status(200).send();
             });
         } catch (error) {
@@ -236,7 +236,7 @@ export default function routes(app, addon) {
             }
 
             try {
-                var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
+                jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
             } catch (error) {
                 addon.logger.warn(`Invalid JWT: ${error.message}`);
                 res.status(401).send(`Invalid JWT: ${error.message}`);
@@ -325,7 +325,7 @@ export default function routes(app, addon) {
                 const attachmentId = context.attachmentId;
 
                 const fileData = await getFileDataFromUrl(body.url);
-                const attachmentInfo = await updateContent(httpClient, userAccountId, pageId, attachmentId, fileData);
+                await updateContent(httpClient, userAccountId, pageId, attachmentId, fileData);
             } else if (body.status == 6 || body.status == 7) { // MustForceSave, CorruptedForceSave
                 addon.logger.warn("Force save is not supported");
                 res.json({ error: 1, message: "Force save is not supported"});
