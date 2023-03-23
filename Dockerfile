@@ -1,4 +1,4 @@
-FROM node:14-alpine AS confluence-cloud
+FROM node:16-alpine AS confluence-cloud
 LABEL maintainer Ascensio System SIA <support@onlyoffice.com>
 ARG NODE_ENV=production
 ARG AC_OPTS=no_reg
