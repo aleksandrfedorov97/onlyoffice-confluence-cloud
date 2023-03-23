@@ -161,10 +161,7 @@ export default function routes(app, addon) {
             );
 
             const jwtSecret = await getJwtSecret(addon, httpClient);
-
-            if (jwtSecret) {
-                editorConfig.token = jwt.encodeSymmetric(editorConfig, jwtSecret);
-            }
+            editorConfig.token = jwt.encodeSymmetric(editorConfig, jwtSecret);
 
             res.render(
                 'editor.hbs',
@@ -228,25 +225,22 @@ export default function routes(app, addon) {
 
         try {
             const jwtSecret = await getJwtSecret(addon, httpClient);
+            const jwtHeader = await getJwtHeader(addon, httpClient);
+            const authHeader = req.headers[jwtHeader.toLowerCase()];
+            const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
-            if (jwtSecret) {
-                const jwtHeader = await getJwtHeader(addon, httpClient);
-                const authHeader = req.headers[jwtHeader.toLowerCase()];
-                const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+            if (!token) {
+                addon.logger.warn("Could not find authentication data on request");
+                res.status(401).send("Could not find authentication data on request");
+                return;
+            }
 
-                if (!token) {
-                    addon.logger.warn("Could not find authentication data on request");
-                    res.status(401).send("Could not find authentication data on request");
-                    return;
-                }
-
-                try {
-                    var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
-                } catch (error) {
-                    addon.logger.warn(`Invalid JWT: ${error.message}`);
-                    res.status(401).send(`Invalid JWT: ${error.message}`);
-                    return;
-                }
+            try {
+                var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
+            } catch (error) {
+                addon.logger.warn(`Invalid JWT: ${error.message}`);
+                res.status(401).send(`Invalid JWT: ${error.message}`);
+                return;
             }
 
             const uri = await getUriDownloadAttachment(httpClient, context.userId, context.pageId, context.attachmentId);
@@ -295,34 +289,31 @@ export default function routes(app, addon) {
         });
 
         try {
-            const jwtSecret = await getJwtSecret(addon, httpClient);
+            let token = body.token;
+            let tokenFromHeader = false;
 
-            if (jwtSecret) {
-                let token = body.token;
-                let tokenFromHeader = false;
+            if (!token) {
+                const jwtHeader = await getJwtHeader(addon, httpClient);
+                const authHeader = req.headers[jwtHeader.toLowerCase()];
+                token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
+                tokenFromHeader = true;
+            }
 
-                if (!token) {
-                    const jwtHeader = await getJwtHeader(addon, httpClient);
-                    const authHeader = req.headers[jwtHeader.toLowerCase()];
-                    token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-                    tokenFromHeader = true;
-                }
+            if (!token) {
+                addon.logger.warn("Could not find authentication data on request");
+                res.status(401).send("Could not find authentication data on request");
+                return;
+            }
 
-                if (!token) {
-                    addon.logger.warn("Could not find authentication data on request");
-                    res.status(401).send("Could not find authentication data on request");
-                    return;
-                }
+            try {
+                const jwtSecret = await getJwtSecret(addon, httpClient);
+                var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
 
-                try {
-                    var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
-
-                    body = tokenFromHeader ? bodyFromToken.payload : bodyFromToken;
-                } catch (error) {
-                    addon.logger.warn(`Invalid JWT: ${error.message}`);
-                    res.status(401).send(`Invalid JWT: ${error.message}`);
-                    return;
-                }
+                body = tokenFromHeader ? bodyFromToken.payload : bodyFromToken;
+            } catch (error) {
+                addon.logger.warn(`Invalid JWT: ${error.message}`);
+                res.status(401).send(`Invalid JWT: ${error.message}`);
+                return;
             }
 
             addon.logger.info(`Callback status: ${body.status}`);
