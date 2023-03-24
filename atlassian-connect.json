@@ -27,7 +27,7 @@
             "de-DE": "/i18n/de_DE.json",
             "es-ES": "/i18n/es_ES.json",
             "fr-FR": "/i18n/fr_FR.json",
-
+            "ja-JP": "/i18n/ja_JP.json",
             "ru-RU": "/i18n/ru_RU.json"
         }
     },
