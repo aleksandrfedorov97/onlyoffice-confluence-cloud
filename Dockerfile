@@ -8,8 +8,7 @@ ENV NODE_ENV=$NODE_ENV \
     PORT=$PORT
 WORKDIR /usr/src/app
 COPY ./package*.json ./
-RUN npm install && \
-    npm install pg --save
+RUN npm install
 COPY . .
 EXPOSE $PORT
 CMD [ "npm", "start" ]
