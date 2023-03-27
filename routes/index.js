@@ -16,8 +16,10 @@
 
 import * as jwt from 'atlassian-jwt';
 const documentHelper = require("../helpers/documentHelper.js");
+const lifecycleManager = require("../helpers/lifecycleManager.js");
 const urlHelper = require("../helpers/urlHelper.js");
 const util = require("util");
+const _ = require("lodash");
 
 const {
     setAppProperty,
@@ -40,6 +42,10 @@ export default function routes(app, addon) {
     app.get('/', (req, res) => {
         res.redirect('/atlassian-connect.json');
     });
+
+    app.post('/installed', addon.verifyInstallation(), lifecycleManager.postInstallation(addon));
+
+    app.post('/uninstalled', addon.verifyInstallation(), lifecycleManager.postUninstallation(addon));
 
     app.get('/healthcheck', (req, res) => {
         res.status(200).send();

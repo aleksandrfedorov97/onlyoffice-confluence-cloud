@@ -12,7 +12,8 @@
         "type": "jwt"
     },
     "lifecycle": {
-        "installed": "/installed"
+        "installed": "/installed",
+        "uninstalled": "/uninstalled"
     },
     "scopes": [
         "READ",
