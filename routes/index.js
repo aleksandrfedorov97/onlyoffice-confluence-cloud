@@ -167,7 +167,12 @@ export default function routes(app, addon) {
             );
 
             const jwtSecret = await getJwtSecret(addon, httpClient);
-            editorConfig.token = jwt.encodeSymmetric(editorConfig, jwtSecret);
+
+            if (jwtSecret && jwtSecret != "") {
+                editorConfig.token = jwt.encodeSymmetric(editorConfig, jwtSecret);
+            } else {
+                editorConfig.token = "";
+            }
 
             res.render(
                 'editor.hbs',
