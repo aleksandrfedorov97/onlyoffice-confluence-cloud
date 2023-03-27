@@ -63,9 +63,13 @@ urlHelper.getGoBackUrl = function (hostBaseUrl, pageId) {
 }
 
 urlHelper.getDocApiUrl = async function (addon, httpClient) {
-    const docApiUrl = await getAppProperty(httpClient, "docApiUrl");
+    var docApiUrl = await getAppProperty(httpClient, "docApiUrl") || addon.config.docServer().default.adress;
 
-    return appendSlash(docApiUrl || addon.config.docServer().default.adress);
+    if (docApiUrl && docApiUrl != "") {
+        return appendSlash(docApiUrl);
+    }
+
+    return "";
 }
 
 function appendSlash(url) {
