@@ -80,8 +80,8 @@
     "product": "confluence",
     "docServer": {
         "default": {
-            "adress": "https://docserver-example.com/",
-            "secret": "secret",
+            "adress": "",
+            "secret": "",
             "authorizationHeader": "Authorization"
         }
     }
