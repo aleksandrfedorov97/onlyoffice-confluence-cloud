@@ -61,7 +61,8 @@ app.use(morgan(devEnv ? 'dev' : 'combined'));
 
 // Configure Handlebars
 i18n.configure({
-    locales: ['en', 'ru'],
+    locales: ['de', 'en', 'es', 'fr', 'it', 'ja-JP', 'ru'],
+    fallbacks: { 'ja': 'ja-JP' },
     defaultLocale: 'en',
     cookie: 'locale',
     directory: __dirname + "/locales"
