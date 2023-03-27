@@ -16,7 +16,7 @@
 
 import * as jwt from 'atlassian-jwt';
 const documentHelper = require("../helpers/documentHelper.js");
-const verifyUninstallation = require("../helpers/verify-uninstallation.js");
+const lifecycleManager = require("../helpers/lifecycleManager.js");
 const urlHelper = require("../helpers/urlHelper.js");
 const util = require("util");
 const _ = require("lodash");
@@ -43,35 +43,9 @@ export default function routes(app, addon) {
         res.redirect('/atlassian-connect.json');
     });
 
-    app.post('/uninstalled', verifyUninstallation.verify(addon), (req, res) => {
-        const settings = req.body;
-        addon.settings.set("clientInfo", settings, settings.clientKey).then(
-            data => {
-                if (addon.app.get("env") !== "production") {
-                    self.logger.info(
-                        `Saved tenant details for ${
-                        settings.clientKey
-                        } to database\n${util.inspect(data)}`
-                    );
-                }
-                addon.emit("host_settings_saved", settings.clientKey, data);
-                const { unexpectedUninstallHook } = res.locals || {};
-                if (unexpectedUninstallHook) {
-                    res.setHeader("x-unexpected-symmetric-hook", "true");
-                }
-                res.status(204).send();
-            },
-            err => {
-                self.emit("host_settings_not_saved", settings.clientKey, {
-                    err
-                });
-                res.status(500).send(
-                    _.escape(
-                        `Could not lookup stored client data for ${settings.clientKey}: ${err}`
-                    )
-                );
-        });
-    });
+    app.post('/installed', addon.verifyInstallation(), lifecycleManager.postInstallation(addon));
+
+    app.post('/uninstalled', addon.verifyInstallation(), lifecycleManager.postUninstallation(addon));
 
     app.get('/healthcheck', (req, res) => {
         res.status(200).send();
