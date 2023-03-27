@@ -14,21 +14,26 @@
 * limitations under the License.
 */
 
-const {
-    getAppProperty
-} = require("./requestHelper.js");
 const jwt = require("atlassian-jwt");
 
-async function getJwtSecret(addon, httpClient)  {
-    const jwtSecret = await getAppProperty(httpClient, "jwtSecret");
+async function getJwtSecret(addon, clientKey)  {
+    const clientProperties = await addon.settings.get("clientProperties", clientKey);
 
-    return jwtSecret ? jwtSecret : addon.config.docServer().default.secret;
+    if (clientProperties && clientProperties.jwtSecret) {
+        return clientProperties.jwtSecret;
+    }
+
+    return addon.config.docServer().default.secret;
 }
 
-async function getJwtHeader(addon, httpClient) {
-    const jwtHeader = await getAppProperty(httpClient, "jwtHeader");
+async function getJwtHeader(addon, clientKey) {
+    const clientProperties = await addon.settings.get("clientProperties", clientKey);
 
-    return jwtHeader ? jwtHeader : addon.config.docServer().default.authorizationHeader
+    if (clientProperties && clientProperties.jwtHeader) {
+        return clientProperties.jwtHeader;
+    }
+
+    return  addon.config.docServer().default.authorizationHeader
 }
 
 async function createQueryToken(addon, clientKey, userAccountId, context) {

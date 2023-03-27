@@ -22,7 +22,6 @@ const util = require("util");
 const _ = require("lodash");
 
 const {
-    setAppProperty,
     getAttachmentInfo,
     getUserInfo,
     updateContent,
@@ -54,13 +53,13 @@ export default function routes(app, addon) {
     app.get('/configure', [addon.authenticate(), addon.authorizeConfluence({ application: ["administer"] })], async (req, res) => {
         
         try {
-            const httpClient = addon.httpClient(req);
+            const clientKey = req.context.clientKey;
 
             const context = {
                 title: "ONLYOFFICE",
-                docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient),
-                jwtSecret: await getJwtSecret(addon, httpClient),
-                jwtHeader: await getJwtHeader(addon, httpClient)
+                docApiUrl: await urlHelper.getDocApiUrl(addon, clientKey),
+                jwtSecret: await getJwtSecret(addon, clientKey),
+                jwtHeader: await getJwtHeader(addon, clientKey)
             };
 
             res.render(
@@ -91,14 +90,36 @@ export default function routes(app, addon) {
         }
 
         try {
-            const httpClient = addon.httpClient(req);
+            const clientKey = req.context.clientKey;
 
-            let docApiUrl = setAppProperty(httpClient, "docApiUrl", req.body.docApiUrl);
-            let jwtSecret = setAppProperty(httpClient, "jwtSecret", req.body.jwtSecret);
-            let jwtHeader = setAppProperty(httpClient, "jwtHeader", req.body.jwtHeader);
-            Promise.all([docApiUrl, jwtSecret, jwtHeader]).then(() => {
-                res.status(200).send();
-            });
+            let clientProperties = {
+                docApiUrl: req.body.docApiUrl,
+                jwtSecret: req.body.jwtSecret,
+                jwtHeader: req.body.jwtHeader
+            }
+
+            addon.settings.set("clientProperties", clientProperties, clientKey).then(
+                data => {
+                    if (addon.app.get("env") !== "production") {
+                        addon.logger.info(
+                            `Saved tenant details for ${
+                                clientKey
+                            } to database\n${util.inspect(data)}`
+                        );
+                    }
+                    res.status(200).send();
+                },
+                err => {
+                    addon.emit("host_settings_not_saved", clientKey, {
+                        err
+                    });
+                    res.status(500).send(
+                        _.escape(
+                            `Could not lookup stored client data for ${clientKey}: ${err}`
+                        )
+                    );
+                }
+            );
         } catch (error) {
             addon.logger.warn(error);
             res.status(500).send("Internal error");
