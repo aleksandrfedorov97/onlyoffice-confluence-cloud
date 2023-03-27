@@ -83,6 +83,9 @@
             "adress": "",
             "secret": "",
             "authorizationHeader": "Authorization"
+        },
+        "links": {
+            "docsCloud": "https://www.onlyoffice.com/docs-registration.aspx?referer=confluence-cloud"
         }
     }
 }

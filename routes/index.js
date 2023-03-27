@@ -60,7 +60,8 @@ export default function routes(app, addon) {
                 title: "ONLYOFFICE",
                 docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient),
                 jwtSecret: await getJwtSecret(addon, httpClient),
-                jwtHeader: await getJwtHeader(addon, httpClient)
+                jwtHeader: await getJwtHeader(addon, httpClient),
+                linkDocsCloud: addon.config.docServer().links.docsCloud
             };
 
             res.render(
