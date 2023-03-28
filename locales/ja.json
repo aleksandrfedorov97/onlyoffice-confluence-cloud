@@ -1,0 +1,13 @@
+{
+	"Server settings": "サーバー設定",
+	"Document Editing Service address": "文書編集サービスアドレス",
+	"Secret key": "シークレットキー",
+	"Authorization header": "認証ヘッダー",
+	"Save": "保存",
+	"Successfully saved the configuration": "設定を保存しました",
+	"Error saving configuration": "設定を保存中にエラーが発生しました",
+	"ONLYOFFICE cannot be reached. Please contact admin.": "ONLYOFFICEに接続できません。管理者に相談してください。",
+	"ONLYOFFICE Docs Cloud": "ONLYOFFICE Docs Cloud",
+	"Easily launch the editors in the cloud without downloading and installation": "Easily launch the editors in the cloud without downloading and installation",
+	"Get Now": "Get Now"
+}
