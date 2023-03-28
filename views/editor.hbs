@@ -1,9 +1,22 @@
 {{!< layout}}
+
+<div id="errorBlock" class="padded">
+    <div class="error-block">
+        <div class="error-image">
+            <img src="/image/error.svg">
+        </div>
+        <div class="error-message-block">
+            <h1>Unavailable Document Server</h1>
+            <p class="error-message">{{__ "ONLYOFFICE cannot be reached. Please contact admin."}}</p>
+        </div>
+    </div>
+</div>
+
 <div id="placeholder"></div>
 <script> 
     $(document).ready(function() {
         if (typeof DocsAPI === "undefined") {
-            alert("{{__ "ONLYOFFICE cannot be reached. Please contact admin."}}");
+            $("#errorBlock").show();
             return;
         }
 
