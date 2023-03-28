@@ -47,6 +47,8 @@ import i18n from 'i18n';
 import routes from './routes';
 import { addServerSideRendering } from './server-side-rendering';
 
+require('dotenv').config();
+
 // Bootstrap Express and atlassian-connect-express
 const app = express();
 const addon = ace(app);
