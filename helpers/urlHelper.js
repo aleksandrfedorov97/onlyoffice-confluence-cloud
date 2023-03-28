@@ -15,10 +15,6 @@
 */
 
 const {
-    getAppProperty
-} = require("./requestHelper.js");
-
-const {
     createQueryToken
 } = require("../helpers/jwtManager.js");
 
@@ -62,14 +58,18 @@ urlHelper.getGoBackUrl = function (hostBaseUrl, pageId) {
     return url;
 }
 
-urlHelper.getDocApiUrl = async function (addon, httpClient) {
-    var docApiUrl = await getAppProperty(httpClient, "docApiUrl") || addon.config.docServer().default.adress;
+urlHelper.getDocApiUrl = async function (addon, clientKey) {
+    const clientProperties = await addon.settings.get("clientProperties", clientKey);
 
-    if (docApiUrl && docApiUrl != "") {
-        return appendSlash(docApiUrl);
+    var docApiUrl = ""
+
+    if (clientProperties &&  clientProperties.docApiUrl) {
+        docApiUrl = clientProperties.docApiUrl;
+    } else {
+        docApiUrl = addon.config.docServer().default.adress;
     }
 
-    return "";
+    return docApiUrl != "" ? appendSlash(docApiUrl) : docApiUrl;
 }
 
 function appendSlash(url) {

@@ -22,7 +22,6 @@ const util = require("util");
 const _ = require("lodash");
 
 const {
-    setAppProperty,
     getAttachmentInfo,
     getUserInfo,
     updateContent,
@@ -54,13 +53,13 @@ export default function routes(app, addon) {
     app.get('/configure', [addon.authenticate(), addon.authorizeConfluence({ application: ["administer"] })], async (req, res) => {
         
         try {
-            const httpClient = addon.httpClient(req);
+            const clientKey = req.context.clientKey;
 
             const context = {
                 title: "ONLYOFFICE",
-                docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient),
-                jwtSecret: await getJwtSecret(addon, httpClient),
-                jwtHeader: await getJwtHeader(addon, httpClient),
+                docApiUrl: await urlHelper.getDocApiUrl(addon, clientKey),
+                jwtSecret: await getJwtSecret(addon, clientKey),
+                jwtHeader: await getJwtHeader(addon, clientKey),
                 linkDocsCloud: addon.config.docServer().links.docsCloud
             };
 
@@ -92,14 +91,37 @@ export default function routes(app, addon) {
         }
 
         try {
-            const httpClient = addon.httpClient(req);
+            const clientKey = req.context.clientKey;
 
-            let docApiUrl = setAppProperty(httpClient, "docApiUrl", req.body.docApiUrl);
-            let jwtSecret = setAppProperty(httpClient, "jwtSecret", req.body.jwtSecret);
-            let jwtHeader = setAppProperty(httpClient, "jwtHeader", req.body.jwtHeader);
-            Promise.all([docApiUrl, jwtSecret, jwtHeader]).then(() => {
-                res.status(200).send();
-            });
+            let clientProperties = {
+                docApiUrl: req.body.docApiUrl,
+                jwtSecret: req.body.jwtSecret,
+                jwtHeader: req.body.jwtHeader,
+                updateDate: new Date()
+            }
+
+            addon.settings.set("clientProperties", clientProperties, clientKey).then(
+                data => {
+                    if (addon.app.get("env") !== "production") {
+                        addon.logger.info(
+                            `Saved tenant details for ${
+                                clientKey
+                            } to database\n${util.inspect(data)}`
+                        );
+                    }
+                    res.status(200).send();
+                },
+                err => {
+                    addon.emit("host_settings_not_saved", clientKey, {
+                        err
+                    });
+                    res.status(500).send(
+                        _.escape(
+                            `Could not lookup stored client data for ${clientKey}: ${err}`
+                        )
+                    );
+                }
+            );
         } catch (error) {
             addon.logger.warn(error);
             res.status(500).send("Internal error");
@@ -167,7 +189,7 @@ export default function routes(app, addon) {
                 userInfo
             );
 
-            const jwtSecret = await getJwtSecret(addon, httpClient);
+            const jwtSecret = await getJwtSecret(addon, clientKey);
 
             if (jwtSecret && jwtSecret != "") {
                 editorConfig.token = jwt.encodeSymmetric(editorConfig, jwtSecret);
@@ -179,7 +201,7 @@ export default function routes(app, addon) {
                 'editor.hbs',
                 {
                     editorConfig: JSON.stringify(editorConfig),
-                    docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient)
+                    docApiUrl: await urlHelper.getDocApiUrl(addon, clientKey)
                 }
             );
         } catch (error) {
@@ -236,8 +258,8 @@ export default function routes(app, addon) {
         });
 
         try {
-            const jwtSecret = await getJwtSecret(addon, httpClient);
-            const jwtHeader = await getJwtHeader(addon, httpClient);
+            const jwtSecret = await getJwtSecret(addon, context.clientKey);
+            const jwtHeader = await getJwtHeader(addon, context.clientKey);
             const authHeader = req.headers[jwtHeader.toLowerCase()];
             const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
@@ -305,7 +327,7 @@ export default function routes(app, addon) {
             let tokenFromHeader = false;
 
             if (!token) {
-                const jwtHeader = await getJwtHeader(addon, httpClient);
+                const jwtHeader = await getJwtHeader(addon, context.clientKey);
                 const authHeader = req.headers[jwtHeader.toLowerCase()];
                 token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
                 tokenFromHeader = true;
@@ -318,7 +340,7 @@ export default function routes(app, addon) {
             }
 
             try {
-                const jwtSecret = await getJwtSecret(addon, httpClient);
+                const jwtSecret = await getJwtSecret(addon, context.clientKey);
                 var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
 
                 body = tokenFromHeader ? bodyFromToken.payload : bodyFromToken;
