@@ -15,6 +15,7 @@
 */
 
 const urlHelper = require("./urlHelper.js");
+const requestHelper = require("./requestHelper.js");
 
 var documentHelper = {};
 
@@ -88,22 +89,17 @@ documentHelper.getDocumentKey = function (attachmentId, updateTime) {
     return Buffer.from(attachmentId + "_" + Date.parse(updateTime)).toString('base64');
 }
 
-documentHelper.getEditorConfig = async function (addon, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo) {
+documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo) {
 
     const fileType = documentHelper.getFileExtension(attachmentInfo.title);
     let mode = "view";
     let callbackUrl = null;
 
-    let permissionEdit = false;
-    for(var i in attachmentInfo.operations) {
-        if (attachmentInfo.operations[i].targetType == "attachment" && attachmentInfo.operations[i].operation == "update") {
-            permissionEdit = true;
-        }
-    }
+    let permissionEdit = await requestHelper.checkContentPermission(httpClient, userInfo.accountId, attachmentInfo.id, "update");
 
     if (permissionEdit && documentHelper.isEditable(fileType)) {
         mode = "edit";
-        callbackUrl = await urlHelper.getCallbackUrl(addon, localBaseUrl, clientKey, userInfo.accountId, attachmentInfo.container.id, attachmentInfo.id);
+        callbackUrl = await urlHelper.getCallbackUrl(addon, localBaseUrl, clientKey, userInfo.accountId, attachmentInfo.pageId || attachmentInfo.blogPostId, attachmentInfo.id);
     }
 
     return {
@@ -113,12 +109,11 @@ documentHelper.getEditorConfig = async function (addon, clientKey, localBaseUrl,
         documentType: documentHelper.getDocumentType(fileType),
         document: {
             title: attachmentInfo.title,
-            url: await urlHelper.getFileUrl(addon, localBaseUrl, clientKey, userInfo.accountId, attachmentInfo.container.id, attachmentInfo.id),
+            url: await urlHelper.getFileUrl(addon, localBaseUrl, clientKey, userInfo.accountId, attachmentInfo.pageId || attachmentInfo.blogPostId, attachmentInfo.id),
             fileType: fileType,
-            key: documentHelper.getDocumentKey(attachmentInfo.container.id, attachmentInfo.history.createdDate),
+            key: documentHelper.getDocumentKey(attachmentInfo.id, attachmentInfo.version.createdAt),
             info: {
-                owner: attachmentInfo.history.createdBy.displayName,
-                uploaded: attachmentInfo.history.createdDate
+                uploaded: attachmentInfo.version.createdAt
             },
             permissions: {
                 edit: permissionEdit,
@@ -134,7 +129,7 @@ documentHelper.getEditorConfig = async function (addon, clientKey, localBaseUrl,
             },
             customization: {
                 goback: {
-                    url: urlHelper.getGoBackUrl(hostBaseUrl, attachmentInfo.container.id)
+                    url: urlHelper.getGoBackUrl(hostBaseUrl, attachmentInfo.pageId || attachmentInfo.blogPostId)
                 }
             }
         }
