@@ -95,7 +95,8 @@ export default function routes(app, addon) {
             let clientProperties = {
                 docApiUrl: req.body.docApiUrl,
                 jwtSecret: req.body.jwtSecret,
-                jwtHeader: req.body.jwtHeader
+                jwtHeader: req.body.jwtHeader,
+                updateDate: new Date()
             }
 
             addon.settings.set("clientProperties", clientProperties, clientKey).then(
