@@ -188,7 +188,7 @@ export default function routes(app, addon) {
                 userInfo
             );
 
-            const jwtSecret = await getJwtSecret(addon, httpClient);
+            const jwtSecret = await getJwtSecret(addon, clientKey);
 
             if (jwtSecret && jwtSecret != "") {
                 editorConfig.token = jwt.encodeSymmetric(editorConfig, jwtSecret);
@@ -200,7 +200,7 @@ export default function routes(app, addon) {
                 'editor.hbs',
                 {
                     editorConfig: JSON.stringify(editorConfig),
-                    docApiUrl: await urlHelper.getDocApiUrl(addon, httpClient)
+                    docApiUrl: await urlHelper.getDocApiUrl(addon, clientKey)
                 }
             );
         } catch (error) {
@@ -257,8 +257,8 @@ export default function routes(app, addon) {
         });
 
         try {
-            const jwtSecret = await getJwtSecret(addon, httpClient);
-            const jwtHeader = await getJwtHeader(addon, httpClient);
+            const jwtSecret = await getJwtSecret(addon, context.clientKey);
+            const jwtHeader = await getJwtHeader(addon, context.clientKey);
             const authHeader = req.headers[jwtHeader.toLowerCase()];
             const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
@@ -326,7 +326,7 @@ export default function routes(app, addon) {
             let tokenFromHeader = false;
 
             if (!token) {
-                const jwtHeader = await getJwtHeader(addon, httpClient);
+                const jwtHeader = await getJwtHeader(addon, context.clientKey);
                 const authHeader = req.headers[jwtHeader.toLowerCase()];
                 token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
                 tokenFromHeader = true;
@@ -339,7 +339,7 @@ export default function routes(app, addon) {
             }
 
             try {
-                const jwtSecret = await getJwtSecret(addon, httpClient);
+                const jwtSecret = await getJwtSecret(addon, context.clientKey);
                 var bodyFromToken = jwt.decodeSymmetric(token, jwtSecret, jwt.SymmetricAlgorithm.HS256);
 
                 body = tokenFromHeader ? bodyFromToken.payload : bodyFromToken;
