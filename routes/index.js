@@ -163,7 +163,7 @@ export default function routes(app, addon) {
             const httpClient = addon.httpClient(req);
 
             const userInfo = await getUserInfo(httpClient, userAccountId);
-            const attachmentInfo = await getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId, attachmentName);
+            const attachmentInfo = await getAttachmentInfo(httpClient, userAccountId, attachmentId);
 
             const fileType = documentHelper.getFileExtension(attachmentInfo.title);
             const documentType = documentHelper.getDocumentType(fileType);
@@ -175,13 +175,14 @@ export default function routes(app, addon) {
                     "Unsupported MediaType",
                     `Sorry, this file format is not supported (${attachmentInfo.title})`,
                     null,
-                    hostBaseUrl + attachmentInfo._links.download
+                    hostBaseUrl + attachmentInfo.downloadLink
                 );
                 return;
             } 
 
             const editorConfig = await documentHelper.getEditorConfig(
-                addon, 
+                addon,
+                httpClient,
                 clientKey, 
                 localBaseUrl, 
                 hostBaseUrl, 

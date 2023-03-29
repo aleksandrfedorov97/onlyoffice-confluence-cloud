@@ -66,22 +66,16 @@ function setAppProperty(httpClient, propertyKey, value) {
     });
 }
 
-function getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId, attachmentName) {
+function getAttachmentInfo(httpClient, userAccountId, attachmentId) {
     return new Promise((resolve, reject) => {
         httpClient.asUserByAccountId(userAccountId).get({
-            url: `/rest/api/content/${encodeURIComponent(
-                pageId
-            )}/child/attachment?expand=history.lastUpdated,container,operations&filename=${encodeURIComponent(
-                attachmentName
-            )}&limit=999999999`,
+            url: `/api/v2/attachments/${encodeURIComponent(
+                attachmentId
+            )}`,
             json: true
         }, function(err, response, body) {
             if (response.statusCode == 200) {
-                for(var i in body.results) {
-                    if (body.results[i].id == "att" + attachmentId) {
-                        resolve(body.results[i]);
-                    }
-                }
+                resolve(body);
             } else {
                 reject({
                     method: "getAttachmentInfo",
@@ -91,14 +85,6 @@ function getAttachmentInfo(httpClient, userAccountId, pageId, attachmentId, atta
                     description: body.message ? body.message : body
                 });
             }
-
-            reject({
-                method: "getAttachmentInfo",
-                code: 404,
-                type: "Not found",
-                message: "Error getting attachment information.",
-                description: `Not found attachment with id: ${attachmentId}, name: ${attachmentId}.`
-            });
         });
     });
 }
@@ -177,6 +163,43 @@ function getUriDownloadAttachment(httpClient, userAccountId, pageId, attachmentI
     });
 }
 
+function checkContentPermission(httpClient, userAccountId, attachmentId, operation) {
+    return new Promise((resolve, reject) => {
+        if (!/^[A-Z0-9-]+$/i.test(attachmentId)) {
+            reject(new Error("Invalid content ID"));
+            return;
+        }
+        httpClient.post({
+            url: `/rest/api/content/${encodeURIComponent(
+                attachmentId
+            )}/permission/check`,
+            headers: {
+                "X-Atlassian-Token": "no-check"
+            },
+            json: {
+                subject: {
+                    type: "user",
+                    identifier: userAccountId
+                },
+                operation
+            }
+        }, function(err, response, body) {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            if (body.errors && body.errors.length > 0) {
+                reject(body.errors);
+                return;
+            }
+
+                resolve(body.hasPermission);
+            }
+        );
+    });
+}
+
 async function getFileDataFromUrl(url) {
     const file = await axios({
         method: "get",
@@ -197,5 +220,6 @@ module.exports = {
     getUserInfo,
     updateContent,
     getUriDownloadAttachment,
+    checkContentPermission,
     getFileDataFromUrl
 };
