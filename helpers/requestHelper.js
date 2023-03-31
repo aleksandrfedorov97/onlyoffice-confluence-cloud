@@ -189,12 +189,12 @@ function checkContentPermission(httpClient, userAccountId, attachmentId, operati
                 return;
             }
 
-            if (body.errors && body.errors.length > 0) {
-                reject(body.errors);
+            if (body.hasOwnProperty("hasPermission")) {
+                resolve(body.hasPermission);
                 return;
             }
 
-                resolve(body.hasPermission);
+            resolve(false);
             }
         );
     });
