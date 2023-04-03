@@ -68,7 +68,11 @@ function setAppProperty(httpClient, propertyKey, value) {
 
 function getAttachmentInfo(httpClient, userAccountId, attachmentId) {
     return new Promise((resolve, reject) => {
-        httpClient.asUserByAccountId(userAccountId).get({
+        if (userAccountId) {
+            httpClient = httpClient.asUserByAccountId(userAccountId);
+        }
+
+        httpClient.get({
             url: `/api/v2/attachments/${encodeURIComponent(
                 attachmentId
             )}`,
@@ -91,8 +95,10 @@ function getAttachmentInfo(httpClient, userAccountId, attachmentId) {
 
 function getUserInfo(httpClient, userAccountId) {
     return new Promise((resolve, reject) => {
+        let url = userAccountId ? `/rest/api/user?accountId=${encodeURIComponent(userAccountId)}` : `/rest/api/user/anonymous`
+
         httpClient.get({
-            url: `/rest/api/user?accountId=${encodeURIComponent(userAccountId)}`,
+            url: url,
             json: true
         }, function(err, response, body) {
             if (response.statusCode == 200) {
@@ -142,7 +148,11 @@ function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData
 
 function getUriDownloadAttachment(httpClient, userAccountId, pageId, attachmentId) {
     return new Promise((resolve, reject) => {
-        httpClient.asUserByAccountId(userAccountId).get({
+        if (userAccountId) {
+            httpClient = httpClient.asUserByAccountId(userAccountId);
+        }
+
+        httpClient.get({
             url: `/rest/api/content/${encodeURIComponent(
                 pageId
             )}/child/attachment/${encodeURIComponent(

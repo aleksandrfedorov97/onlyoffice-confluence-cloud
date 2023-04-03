@@ -59,7 +59,7 @@ async function verifyQueryToken(addon, token, operation) {
 
     const context = jwt.decodeSymmetric(token, settings.sharedSecret, jwt.SymmetricAlgorithm.HS256);
 
-    if (!context.userId || !context.pageId || !context.attachmentId || !context.operation) {
+    if (!context.pageId || !context.attachmentId || !context.operation) {
         return Promise.reject({
             message: "Token did not contain required parameters"
         })
