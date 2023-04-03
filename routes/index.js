@@ -137,24 +137,22 @@ export default function routes(app, addon) {
 
         const pageId = req.query.pageId;
         const attachmentId = req.query.attachmentId;
-        const attachmentName = req.query.attachmentName;
 
         addon.logger.info(`Request to generate a configuration to open the editor:\n${util.inspect({
             clientKey: clientKey,
             hostBaseUrl: hostBaseUrl,
             userAccountId: userAccountId,
             pageId: pageId,
-            attachmentId: attachmentId,
-            attachmentName: attachmentName
+            attachmentId: attachmentId
         })}`);
 
-        if (!pageId || !attachmentId || !attachmentName) {
-            addon.logger.warn("Not found requested paremeters (pageId, attachmentId, attachmentName)");
+        if (!pageId || !attachmentId) {
+            addon.logger.warn("Not found requested paremeters (pageId, attachmentId)");
             res.status(404);
             sendError(
                 "Not found",
                 "Attachment not found.",
-                "Not found requested paremeters (pageId, attachmentId, attachmentName)."
+                "Not found requested paremeters (pageId, attachmentId)."
             );
             return;
         }
