@@ -1,0 +1,13 @@
+{
+    "Server settings": "Paramètres du serveur",
+    "Document Editing Service address": "Adresse du service d'édition de documents",
+    "Secret key": "Clé secrète",
+    "Authorization header": "En-tête d'autorisation",
+    "Save": "Enregistrer",
+    "Successfully saved the configuration": "La configuration a été enregistrée avec succès",
+    "Error saving configuration": "Erreur d'enregistrement de la configuration",
+    "ONLYOFFICE cannot be reached. Please contact admin.": "ONLYOFFICE ne peut pas être atteint. Veuillez contacter l'administration.",
+    "ONLYOFFICE Docs Cloud": "ONLYOFFICE Docs Cloud",
+    "Easily launch the editors in the cloud without downloading and installation": "Lancez facilement les éditeurs dans le cloud sans téléchargement ni installation",
+    "Get Now": "Obtenir maintenant"
+}
