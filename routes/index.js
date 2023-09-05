@@ -23,6 +23,7 @@ const _ = require("lodash");
 
 const {
     getAttachmentInfo,
+    getAttachmentsOnPage,
     getUserInfo,
     updateContent,
     getUriDownloadAttachment,
@@ -200,7 +201,8 @@ export default function routes(app, addon) {
                 'editor.hbs',
                 {
                     editorConfig: JSON.stringify(editorConfig),
-                    docApiUrl: await urlHelper.getDocApiUrl(addon, clientKey)
+                    docApiUrl: await urlHelper.getDocApiUrl(addon, clientKey),
+                    pageId: pageId
                 }
             );
         } catch (error) {
@@ -371,5 +373,71 @@ export default function routes(app, addon) {
         }
 
         res.json({ error: 0 });
+    });
+
+    app.post('/reference-data', addon.authenticate(true), async (req, res) => {
+
+        const userAccountId = req.context.userAccountId;
+        const clientKey = req.context.clientKey;
+        const localBaseUrl = req.context.localBaseUrl;
+        const pageId = req.query.pageId;
+
+        let attachmentId;
+        let referenceData;
+        if (req.body.referenceData) {
+            referenceData = req.body.referenceData;
+            if (referenceData.instanceId && referenceData.instanceId === clientKey) {
+                attachmentId = referenceData.fileKey;
+            }
+        }
+
+        const httpClient = addon.httpClient(req);
+
+        let attachmentInfo;
+        let error;
+        try {
+            attachmentInfo = await getAttachmentInfo(httpClient, userAccountId, attachmentId);
+        } catch (e) {
+            error = e;
+        }
+
+        try {
+            if (error && error.code === 404 || !attachmentInfo) {
+                if (pageId && pageId !== '') {
+                    const path = req.body.path;
+                    const attachments = await getAttachmentsOnPage(httpClient, userAccountId, pageId, path);
+                    if (attachments && attachments[0]) {
+                        attachmentInfo = attachments[0];
+                        referenceData.fileKey = attachmentInfo.id;
+                        referenceData.instanceId = clientKey;
+                    }
+                }
+            }
+
+            if (!attachmentInfo) {
+                addon.logger.warn(error);
+                res.status(error.code || 500).send(error.message || "Undefined error.");
+                return;
+            }
+
+            const result = {
+                fileType: documentHelper.getFileExtension(attachmentInfo.title),
+                path: attachmentInfo.title,
+                referenceData: referenceData,
+                url: await urlHelper.getFileUrl(addon, localBaseUrl, clientKey, userAccountId, attachmentInfo.pageId || attachmentInfo.blogPostId, attachmentInfo.id),
+            }
+
+            const jwtSecret = await getJwtSecret(addon, clientKey);
+            if (jwtSecret && jwtSecret != "") {
+                result.token = jwt.encodeSymmetric(result, jwtSecret);
+            } else {
+                result.token = "";
+            }
+
+            res.json(result);
+        } catch (e) {
+            addon.logger.warn(error);
+            res.status(error.code || 500).send(error.message || "Undefined error.");
+        }
     });
 }
