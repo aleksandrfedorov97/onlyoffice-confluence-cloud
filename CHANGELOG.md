@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.0
+## Added
+- Paste Special to add a link between files
+
 ## 1.0.0
 ## Added
 - configuration page
