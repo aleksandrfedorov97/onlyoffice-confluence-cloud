@@ -9,5 +9,8 @@
     "ONLYOFFICE cannot be reached. Please contact admin.": "No se puede establecer contacto con ONLYOFFICE. Por favor, póngase en contacto con el administrador.",
     "ONLYOFFICE Docs Cloud": "ONLYOFFICE Docs Cloud",
     "Easily launch the editors in the cloud without downloading and installation": "Inicie fácilmente los editores en la nube sin tener que descargarlos ni instalarlos",
-    "Get Now": "Obtener ahora"
+    "Get Now": "Obtener ahora",
+    "You are not permitted to perform this operation.": "No tiene permitido realizar esta operación.",
+    "Attachment File Not Found": "Archivo adjunto no encontrado",
+    "Unknown error": "Error desconocido"
 }
