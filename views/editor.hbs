@@ -25,7 +25,38 @@
             return;
         }
 
+        var docEditor;
+
+        var onRequestReferenceData = function(event) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "reference-data?pageId=" + "{{pageId}}");
+            xhr.setRequestHeader("Authorization", "JWT " + "{{token}}");
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.send(JSON.stringify(event.data));
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState != 4) return;
+                if (xhr.status == 200) {
+                    docEditor.setReferenceData(JSON.parse(xhr.responseText));
+                } else if (xhr.status == 403) {
+                    docEditor.setReferenceData({error: "{{__ "You are not permitted to perform this operation."}}"});
+                } else if (xhr.status == 404) {
+                    docEditor.setReferenceData({error: "{{__ "Attachment File Not Found"}}"});
+                } else {
+                    docEditor.setReferenceData({error: "{{__ "Unknown error"}}"});
+                }
+            }
+        };
+
         let jsonEditorConfig = JSON.parse(`{{{editorConfig}}}`);
+
+        var config = {
+            "events" : {
+                "onRequestReferenceData": onRequestReferenceData
+            },
+        };
+
+        Object.assign(jsonEditorConfig, config);
 
         const locale = new Promise(function(resolve, reject) {
             AP.user.getLocale(function(lc) {
@@ -43,7 +74,7 @@
             jsonEditorConfig.document.info.uploaded = new Date(jsonEditorConfig.document.info.uploaded).toLocaleString(values[0].replace("_", "-"), {timeZone: values[1]});
             jsonEditorConfig.editorConfig.lang = values[0].replace("_", "-");
 
-            var DocEditor = new DocsAPI.DocEditor("placeholder", jsonEditorConfig);
+            docEditor = new DocsAPI.DocEditor("placeholder", jsonEditorConfig);
         });
     });
 </script>
