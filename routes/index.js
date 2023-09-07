@@ -135,6 +135,7 @@ export default function routes(app, addon) {
         const localBaseUrl = req.context.localBaseUrl;
         const hostBaseUrl = req.context.hostBaseUrl;
         const clientKey = req.context.clientKey;
+        const addonKey = req.context.addonKey;
 
         const pageId = req.query.pageId;
         const attachmentId = req.query.attachmentId;
@@ -202,7 +203,8 @@ export default function routes(app, addon) {
                 {
                     editorConfig: JSON.stringify(editorConfig),
                     docApiUrl: await urlHelper.getDocApiUrl(addon, clientKey),
-                    pageId: pageId
+                    pageId: pageId,
+                    editorUrl: urlHelper.getEditorUrl(hostBaseUrl, addonKey, pageId)
                 }
             );
         } catch (error) {

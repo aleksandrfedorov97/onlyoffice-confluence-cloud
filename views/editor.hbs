@@ -48,11 +48,19 @@
             }
         };
 
+        var onRequestOpen = function(event) {
+            const windowName = event.data.windowName;
+            const attachmentId = event.data.referenceData.fileKey;
+
+            window.open("{{{editorUrl}}}" + attachmentId.substring(3), windowName);
+        };
+
         let jsonEditorConfig = JSON.parse(`{{{editorConfig}}}`);
 
         var config = {
             "events" : {
-                "onRequestReferenceData": onRequestReferenceData
+                "onRequestReferenceData": onRequestReferenceData,
+                "onRequestOpen": onRequestOpen
             },
         };
 

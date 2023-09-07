@@ -72,6 +72,12 @@ urlHelper.getDocApiUrl = async function (addon, clientKey) {
     return docApiUrl != "" ? appendSlash(docApiUrl) : docApiUrl;
 }
 
+urlHelper.getEditorUrl = function (hostBaseUrl, addonKey, pageId, attachmentId = "") {
+    hostBaseUrl = hostBaseUrl.endsWith('/') ? hostBaseUrl.slice(0, -1) : hostBaseUrl;
+
+    return `${hostBaseUrl}/plugins/servlet/ac/${addonKey}/editor?page.id=${pageId}&attachment.id=${attachmentId}`;
+}
+
 function appendSlash(url) {
     return url.replace(/\/$|$/, '/');
 }
