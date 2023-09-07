@@ -421,6 +421,7 @@ export default function routes(app, addon) {
             }
 
             const result = {
+                key: documentHelper.getDocumentKey(attachmentInfo.id, attachmentInfo.version.createdAt),
                 fileType: documentHelper.getFileExtension(attachmentInfo.title),
                 path: attachmentInfo.title,
                 referenceData: referenceData,
