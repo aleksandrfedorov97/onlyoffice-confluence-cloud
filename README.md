@@ -9,6 +9,20 @@ The app allows to:
 * View and edit text documents, spreadsheets, and presentations.
 * Co-edit documents in real-time using two co-editing modes (Fast and Strict), Track Changes, comments, built-in chat.
 
+Supported formats:
+
+**For viewing:**
+
+* **WORD:** DJVU, DOC, DOCM, DOCX, DOCXF, DOT, DOTM, DOTX, EPUB, FB2, FODT, HTM, HTML, MHT, ODT, OFORM, OTT, OXPS, PDF, RTF, TXT, XML, XPS
+* **CELL:** CSV, FODS, ODS, OTS, XLS, XLSM, XLSX, XLT, XLTM, XLTX
+* **SLIDE:** FODP, ODP, OTP, POT, POTM, POTX, PPS, PPSM, PPSX, PPT, PPTM, PPTX
+
+**For editing:**
+
+* **WORD:** DOCM, DOCX, DOCXF, DOTM, DOTX, HTM, XML
+* **CELL:** XLSM, XLSX, XLTM, XLTX
+* **SLIDE:** POTM, POTX, PPSM, PPSX, PPTM, PPTX
+
 ## Installing ONLYOFFICE Docs
 
 To be able to edit documents in Confluence Cloud, you will need an instance of ONLYOFFICE Docs (Document Server). You can install free Community version or scalable Enterprise Edition.

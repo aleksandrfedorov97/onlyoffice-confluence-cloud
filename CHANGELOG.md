@@ -1,5 +1,9 @@
 # Change Log
 
+## 
+## Added
+- extended list of supported formats
+
 ## 1.0.0
 ## Added
 - configuration page
