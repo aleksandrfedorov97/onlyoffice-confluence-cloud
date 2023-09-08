@@ -9,5 +9,8 @@
     "ONLYOFFICE cannot be reached. Please contact admin.": "Приложение ONLYOFFICE недоступно. Пожалуйста, свяжитесь с администратором.",
     "ONLYOFFICE Docs Cloud": "ONLYOFFICE Docs Cloud",
     "Easily launch the editors in the cloud without downloading and installation": "Легко запускайте редакторы в облаке без скачивания и установки",
-    "Get Now": "Получить сейчас"
+    "Get Now": "Получить сейчас",
+    "You are not permitted to perform this operation.": "У вас нет разрешения на выполнение этой операции.",
+    "Attachment File Not Found": "Файл вложения не найден",
+    "Unknown error": "Неизвестная ошибка"
 }

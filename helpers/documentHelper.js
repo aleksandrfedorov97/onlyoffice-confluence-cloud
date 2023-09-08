@@ -88,6 +88,10 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
             },
             permissions: {
                 edit: permissionEdit,
+            },
+            referenceData: {
+                fileKey: attachmentInfo.id,
+                instanceId: clientKey
             }
         },
         editorConfig: {

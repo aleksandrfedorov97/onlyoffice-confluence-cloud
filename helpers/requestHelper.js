@@ -93,6 +93,33 @@ function getAttachmentInfo(httpClient, userAccountId, attachmentId) {
     });
 }
 
+function getAttachmentsOnPage(httpClient, userAccountId, pageId, fileName) {
+    return new Promise((resolve, reject) => {
+        if (userAccountId) {
+            httpClient = httpClient.asUserByAccountId(userAccountId);
+        }
+
+        httpClient.get({
+            url: `/api/v2/pages/${encodeURIComponent(
+                pageId
+            )}/attachments?filename=${encodeURIComponent(fileName)}`,
+            json: true
+        }, function(err, response, body) {
+            if (response.statusCode == 200) {
+                resolve(body.results);
+            } else {
+                reject({
+                    method: "getAttachmentsOnPage",
+                    code: response.statusCode,
+                    type: response.statusMessage,
+                    message: "Error getting attachments on page.",
+                    description: body.message ? body.message : body
+                });
+            }
+        });
+    });
+}
+
 function getUserInfo(httpClient, userAccountId) {
     return new Promise((resolve, reject) => {
         let url = userAccountId ? `/rest/api/user?accountId=${encodeURIComponent(userAccountId)}` : `/rest/api/user/anonymous`
@@ -227,6 +254,7 @@ module.exports = {
     getAppProperty,
     setAppProperty,
     getAttachmentInfo,
+    getAttachmentsOnPage,
     getUserInfo,
     updateContent,
     getUriDownloadAttachment,
