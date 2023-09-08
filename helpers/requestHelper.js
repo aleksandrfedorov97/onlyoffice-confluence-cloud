@@ -226,7 +226,7 @@ function checkContentPermission(httpClient, userAccountId, attachmentId, operati
                 return;
             }
 
-            if (body.hasOwnProperty("hasPermission")) {
+            if (Object.prototype.hasOwnProperty.call(body, "hasPermission")) {
                 resolve(body.hasPermission);
                 return;
             }
