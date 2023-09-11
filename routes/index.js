@@ -166,9 +166,9 @@ export default function routes(app, addon) {
             const attachmentInfo = await getAttachmentInfo(httpClient, userAccountId, attachmentId);
 
             const fileType = documentHelper.getFileExtension(attachmentInfo.title);
-            const documentType = documentHelper.getDocumentType(fileType);
+            const isViewable = documentHelper.isViewable(addon, fileType);
 
-            if (!documentType) {
+            if (!isViewable) {
                 addon.logger.warn(`Unsupported MediaType: this file format is not supported (${fileType})`);
                 res.status(415);
                 sendError(

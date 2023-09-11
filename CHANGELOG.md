@@ -2,6 +2,7 @@
 
 ## 1.1.0
 ## Added
+- extended list of supported formats
 - Paste Special to add a link between files
 
 ## 1.0.0

@@ -47,9 +47,12 @@ import i18n from 'i18n';
 import routes from './routes';
 import { addServerSideRendering } from './server-side-rendering';
 
+import utils from './helpers/utils';
+
 // Bootstrap Express and atlassian-connect-express
 const app = express();
-const addon = ace(app);
+const formats = utils.loadJSON('./public/assets/document-formats/onlyoffice-docs-formats.json');
+const addon = ace(app, {config: {docServer: {formats: formats}}});
 
 // See config.json
 const port = addon.config.port();
