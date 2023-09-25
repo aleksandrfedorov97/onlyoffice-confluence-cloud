@@ -29,8 +29,8 @@
     "lint": "eslint app.js server-side-rendering.js routes helpers"
   },
   "dependencies": {
-    "@atlaskit/button": "^15.1.0",
-    "@atlaskit/section-message": "^5.0.7",
+    "@atlaskit/button": "^16.6.0",
+    "@atlaskit/section-message": "^6.3.17",
     "atlassian-connect-express": "^7.4.7",
     "atlassian-jwt": "^2.0.0",
     "axios": "^0.24.0",
