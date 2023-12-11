@@ -31,7 +31,6 @@ jobs:
       - name: Build connector
         shell: bash
         run: |
-          docker compose build \
-            --build-arg AC_OPTS=no-reg
+          docker compose --env-file ./.env.docker.example build
           docker compose push
           docker images
