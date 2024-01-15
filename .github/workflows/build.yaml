@@ -19,7 +19,7 @@ on:
         description: 'Set custom ac_opts build arg if needed'
         type: string
         required: false
-        default: no_reg
+        default: no-reg
 
 jobs:
   build:
