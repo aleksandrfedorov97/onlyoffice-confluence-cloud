@@ -14,9 +14,7 @@
 * limitations under the License.
 */
 
-const {
-    createQueryToken
-} = require("../helpers/jwtManager.js");
+import { createQueryToken } from "../helpers/jwtManager.js";
 
 var urlHelper = {};
 
@@ -82,4 +80,4 @@ function appendSlash(url) {
     return url.replace(/\/$|$/, '/');
 }
 
-module.exports = urlHelper;
+export default urlHelper;

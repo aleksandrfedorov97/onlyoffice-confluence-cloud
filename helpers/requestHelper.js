@@ -14,9 +14,9 @@
 * limitations under the License.
 */
 
-const axios = require("axios");
+import axios from "axios";
 
-function getAppProperty(httpClient, propertyKey) {
+export function getAppProperty(httpClient, propertyKey) {
     return new Promise((resolve, reject) => {
         httpClient.get({
             url: `/rest/atlassian-connect/1/addons/onlyoffice-confluence-cloud/properties/${encodeURIComponent(
@@ -43,7 +43,7 @@ function getAppProperty(httpClient, propertyKey) {
     });
 }
 
-function setAppProperty(httpClient, propertyKey, value) {
+export function setAppProperty(httpClient, propertyKey, value) {
     return new Promise((resolve, reject) => {
         httpClient.put({
             url: `/rest/atlassian-connect/1/addons/onlyoffice-confluence-cloud/properties/${encodeURIComponent(
@@ -66,7 +66,7 @@ function setAppProperty(httpClient, propertyKey, value) {
     });
 }
 
-function getAttachmentInfo(httpClient, userAccountId, attachmentId) {
+export function getAttachmentInfo(httpClient, userAccountId, attachmentId) {
     return new Promise((resolve, reject) => {
         if (userAccountId) {
             httpClient = httpClient.asUserByAccountId(userAccountId);
@@ -93,7 +93,7 @@ function getAttachmentInfo(httpClient, userAccountId, attachmentId) {
     });
 }
 
-function getAttachmentsOnPage(httpClient, userAccountId, pageId, fileName) {
+export function getAttachmentsOnPage(httpClient, userAccountId, pageId, fileName) {
     return new Promise((resolve, reject) => {
         if (userAccountId) {
             httpClient = httpClient.asUserByAccountId(userAccountId);
@@ -120,7 +120,7 @@ function getAttachmentsOnPage(httpClient, userAccountId, pageId, fileName) {
     });
 }
 
-function getUserInfo(httpClient, userAccountId) {
+export function getUserInfo(httpClient, userAccountId) {
     return new Promise((resolve, reject) => {
         let url = userAccountId ? `/rest/api/user?accountId=${encodeURIComponent(userAccountId)}` : `/rest/api/user/anonymous`
 
@@ -143,7 +143,7 @@ function getUserInfo(httpClient, userAccountId) {
     });
 }
 
-function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData) {
+export function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData) {
     return new Promise((resolve, reject) => {
         httpClient.asUserByAccountId(userAccountId).post({
             headers: {
@@ -173,7 +173,7 @@ function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData
     });
 }
 
-function getUriDownloadAttachment(httpClient, userAccountId, pageId, attachmentId) {
+export function getUriDownloadAttachment(httpClient, userAccountId, pageId, attachmentId) {
     return new Promise((resolve, reject) => {
         if (userAccountId) {
             httpClient = httpClient.asUserByAccountId(userAccountId);
@@ -200,7 +200,7 @@ function getUriDownloadAttachment(httpClient, userAccountId, pageId, attachmentI
     });
 }
 
-function checkContentPermission(httpClient, userAccountId, attachmentId, operation) {
+export function checkContentPermission(httpClient, userAccountId, attachmentId, operation) {
     return new Promise((resolve, reject) => {
         if (!/^[A-Z0-9-]+$/i.test(attachmentId)) {
             reject(new Error("Invalid content ID"));
@@ -237,7 +237,7 @@ function checkContentPermission(httpClient, userAccountId, attachmentId, operati
     });
 }
 
-async function getFileDataFromUrl(url) {
+export async function getFileDataFromUrl(url) {
     const file = await axios({
         method: "get",
         responseType: "arraybuffer",
@@ -250,7 +250,7 @@ async function getFileDataFromUrl(url) {
     return file.data;
 }
 
-module.exports = {
+export default {
     getAppProperty,
     setAppProperty,
     getAttachmentInfo,
