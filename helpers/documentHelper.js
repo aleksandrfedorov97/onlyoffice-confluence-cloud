@@ -45,6 +45,16 @@ documentHelper.isEditable = function (addon, extension) {
     return false;
 }
 
+documentHelper.isFillable = function (addon, extension) {
+    const formats = addon.config.docServer().formats || [];
+
+    for (let i = 0; i < formats.length; i++) {
+        if (formats[i].name === extension) return formats[i].actions.includes('fill');
+    }
+
+    return false;
+}
+
 documentHelper.isViewable = function (addon, extension) {
     const formats = addon.config.docServer().formats || [];
 
@@ -61,16 +71,23 @@ documentHelper.getDocumentKey = function (attachmentId, updateTime) {
 }
 
 documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, localBaseUrl, hostBaseUrl, attachmentInfo, userInfo) {
-
     const fileType = documentHelper.getFileExtension(attachmentInfo.title);
-    let mode = "view";
+
     let callbackUrl = null;
 
     let permissionEdit = await requestHelper.checkContentPermission(httpClient, userInfo.accountId, attachmentInfo.id, "update");
+    let isEditable = documentHelper.isEditable(addon, fileType);
+    let isFillable = documentHelper.isFillable(addon, fileType);
 
-    if (permissionEdit && documentHelper.isEditable(addon, fileType)) {
-        mode = "edit";
-        callbackUrl = await urlHelper.getCallbackUrl(addon, localBaseUrl, clientKey, userInfo.accountId, attachmentInfo.pageId || attachmentInfo.blogPostId, attachmentInfo.id);
+    if (permissionEdit && (isEditable || isFillable)) {
+        callbackUrl = await urlHelper.getCallbackUrl(
+            addon,
+            localBaseUrl,
+            clientKey,
+            userInfo.accountId,
+            attachmentInfo.pageId || attachmentInfo.blogPostId,
+            attachmentInfo.id
+        );
     }
 
     return {
@@ -87,7 +104,8 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
                 uploaded: attachmentInfo.version.createdAt
             },
             permissions: {
-                edit: permissionEdit,
+                edit: permissionEdit && isEditable,
+                fillForms: permissionEdit && isFillable
             },
             referenceData: {
                 fileKey: attachmentInfo.id,
@@ -96,7 +114,7 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
         },
         editorConfig: {
             callbackUrl: callbackUrl,
-            mode: mode,
+            mode: "edit",
             lang: "en",
             user: {
                 id: userInfo.accountId,

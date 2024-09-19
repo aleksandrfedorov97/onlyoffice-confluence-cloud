@@ -1,5 +1,10 @@
 # Change Log
 
+# 
+## Changed
+- extended list of supported formats
+- filling and editing pdf
+
 ## 1.1.0
 ## Added
 - extended list of supported formats
