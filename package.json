@@ -22,7 +22,7 @@
     "build-jsx-node": "parcel build --log-level 1 --no-minify --target node --out-dir views/node views/*.jsx",
     "build": "concurrently -i 'npm:build-*'",
     "start": "node --es-module-specifier-resolution=node app.js",
-    "watch-server": "nodemon -e js -r esm app.js",
+    "watch-server": "nodemon --es-module-specifier-resolution=node -e js app.js",
     "watch-jsx-browser": "parcel watch --log-level 1 --no-hmr --global __root_component --out-dir views views/*.jsx",
     "watch-jsx-node": "parcel watch --log-level 1 --target node --out-dir views/node views/*.jsx",
     "watch-jsx": "concurrently 'npm:watch-jsx-browser' 'npm:watch-jsx-node'",
