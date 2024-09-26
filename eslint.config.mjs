@@ -20,7 +20,7 @@ export default [...compat.extends("eslint:recommended", "plugin:react/recommende
             SharedArrayBuffer: "readonly",
         },
 
-        ecmaVersion: 2018,
+        ecmaVersion: 2020,
         sourceType: "module",
     },
 

@@ -438,7 +438,7 @@ export default function routes(app, addon) {
             }
 
             res.json(result);
-        } catch (e) {
+        } catch {
             addon.logger.warn(error);
             res.status(error.code || 500).send(error.message || "Undefined error.");
         }
