@@ -44,6 +44,28 @@
         ],
         "webItems": [
             {
+                "key": "web-item-onlyoffice-create",
+                "name": {
+                    "value": "New document",
+                    "i18n": "onlyoffice.create.link"
+                },
+                "location": "system.content.button",
+                "context": "page",
+                "url": "/create?pageId={page.id}",
+                "icon": {
+                    "width": 16,
+                    "height": 16,
+                    "url": "/image/onlyoffice-icon-16.svg"
+                  },
+                "target": {
+                    "type": "dialog",
+                    "options": {
+                        "chrome": false,
+                        "size": "x-large"
+                    }
+                }
+            },
+            {
                 "key": "web-item-onlyoffice-edit",
                 "name": {
                     "value": "Edit in ONLYOFFICE",
