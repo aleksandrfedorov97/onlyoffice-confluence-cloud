@@ -30,9 +30,9 @@
     "lint": "eslint app.js server-side-rendering.js routes helpers"
   },
   "dependencies": {
-    "@atlaskit/button": "^20.1.2",
+    "@atlaskit/button": "^20.2.0",
     "@atlaskit/section-message": "^6.6.4",
-    "atlassian-connect-express": "^11.4.0",
+    "atlassian-connect-express": "^11.4.1",
     "atlassian-jwt": "^2.0.3",
     "axios": "^1.7.7",
     "body-parser": "^1.20.3",
@@ -58,11 +58,11 @@
     "@babel/core": "^7.25.2",
     "babel-plugin-styled-components": "^2.1.4",
     "concurrently": "^9.0.1",
-    "eslint": "^9.10.0",
+    "eslint": "^9.11.1",
     "eslint-plugin-react": "^7.36.1",
     "longjohn": "^0.2.12",
     "ngrok": "^4.3.3",
-    "nodemon": "^3.1.5",
+    "nodemon": "^3.1.7",
     "parcel-bundler": "^1.12.5",
     "parcel-plugin-externals": "^0.5.2",
     "sqlite3": "^5.1.7"
