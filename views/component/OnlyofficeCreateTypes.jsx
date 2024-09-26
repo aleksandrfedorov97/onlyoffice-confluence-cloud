@@ -53,7 +53,7 @@ export default function OnlyofficeCreateTypes({
     <Stack>
       <Inline space="space.100">
         {creatableTypes.map((type) => (
-          <Box xcss={boxStyles}
+          <Box key={type} xcss={boxStyles}
             style={
               type === value ? { backgroundColor: token('color.background.neutral.hovered') } : {}
             }
