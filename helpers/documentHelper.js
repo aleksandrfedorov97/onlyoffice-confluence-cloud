@@ -16,6 +16,9 @@
 
 import urlHelper from "./urlHelper.js";
 import requestHelper from "./requestHelper.js";
+import { dirname } from 'path';
+import path from 'path';
+import fs from "fs";
 
 var documentHelper = {};
 
@@ -109,6 +112,54 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
             }
         }
     };
+}
+
+documentHelper.getDefaultExtensionByDocumentType = function(type) {
+    if (type == null) {
+        return null;
+    }
+
+    switch (type) {
+        case 'word':
+            return "docx";
+        case 'cell':
+            return "xlsx";
+        case 'slide':
+            return "pptx";
+        case 'pdf':
+            return "pdf";
+        default:
+            return null;
+    }
+}
+
+documentHelper.getBlankFile = function(type, locale) {
+    const appRootScriptDir = dirname(process.argv[1]);
+    const extension = documentHelper.getDefaultExtensionByDocumentType(type);
+
+    var getFilePath = (folder, extension) => {
+        return path.join(
+            appRootScriptDir,
+            'resources',
+            'assets',
+            'document-templates',
+            folder,
+            `new.${extension}`
+        )
+    };
+
+    var filePath = getFilePath(locale.baseName, extension);
+    if (fs.existsSync(filePath)) {
+        return fs.readFileSync(filePath);
+    }
+
+    filePath = getFilePath(locale.language, extension);
+    if (fs.existsSync(filePath)) {
+        return fs.readFileSync(filePath);
+    }
+
+    filePath = getFilePath('en', extension);
+    return fs.readFileSync(filePath);
 }
 
 export default documentHelper;
