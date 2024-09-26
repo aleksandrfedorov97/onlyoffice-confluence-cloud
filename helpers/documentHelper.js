@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-const urlHelper = require("./urlHelper.js");
-const requestHelper = require("./requestHelper.js");
+import urlHelper from "./urlHelper.js";
+import requestHelper from "./requestHelper.js";
 
 var documentHelper = {};
 
@@ -111,4 +111,4 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
     };
 }
 
-module.exports = documentHelper;
+export default documentHelper;

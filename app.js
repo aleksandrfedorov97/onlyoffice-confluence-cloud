@@ -46,7 +46,8 @@ import i18n from 'i18n';
 // Routes live here; this is the C in MVC
 import routes from './routes';
 import { addServerSideRendering } from './server-side-rendering';
-
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import utils from './helpers/utils';
 
 // Bootstrap Express and atlassian-connect-express
@@ -62,12 +63,15 @@ app.set('port', port);
 const devEnv = app.get('env') === 'development';
 app.use(morgan(devEnv ? 'dev' : 'combined'));
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 // Configure Handlebars
 i18n.configure({
     locales: ['de', 'en', 'es', 'fr', 'it', 'ja', 'ru'],
     defaultLocale: 'en',
     cookie: 'locale',
-    directory: __dirname + "/locales"
+    directory: path.join(__dirname, 'locales')
 });
 
 const viewsDir = path.join(__dirname, 'views');

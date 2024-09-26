@@ -15,26 +15,26 @@
 */
 
 import * as jwt from 'atlassian-jwt';
-const documentHelper = require("../helpers/documentHelper.js");
-const lifecycleManager = require("../helpers/lifecycleManager.js");
-const urlHelper = require("../helpers/urlHelper.js");
-const util = require("util");
-const _ = require("lodash");
+import documentHelper from "../helpers/documentHelper.js";
+import lifecycleManager from "../helpers/lifecycleManager.js";
+import urlHelper from "../helpers/urlHelper.js";
+import util from "util";
+import escape from "lodash/escape";
 
-const {
+import {
     getAttachmentInfo,
     getAttachmentsOnPage,
     getUserInfo,
     updateContent,
     getUriDownloadAttachment,
     getFileDataFromUrl
-} = require("../helpers/requestHelper.js");
+} from "../helpers/requestHelper.js";
 
-const {
+import {
     getJwtSecret,
     getJwtHeader,
     verifyQueryToken
-} = require("../helpers/jwtManager.js");
+} from "../helpers/jwtManager.js";
 
 export default function routes(app, addon) {
     // Redirect root path to /atlassian-connect.json,
@@ -117,7 +117,7 @@ export default function routes(app, addon) {
                         err
                     });
                     res.status(500).send(
-                        _.escape(
+                        escape(
                             `Could not lookup stored client data for ${clientKey}: ${err}`
                         )
                     );
@@ -438,7 +438,7 @@ export default function routes(app, addon) {
             }
 
             res.json(result);
-        } catch (e) {
+        } catch {
             addon.logger.warn(error);
             res.status(error.code || 500).send(error.message || "Undefined error.");
         }

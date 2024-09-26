@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-const JSON5 = require("json5");
-const fs = require("fs");
+import JSON5 from "json5";
+import fs from "fs";
 
 const utils = {};
 
@@ -27,10 +27,10 @@ utils.loadJSON = function loadConfig(path) {
   let data = {};
   try {
     data = utils.loadFile(path);
-  } catch (e) {
+  } catch {
     // do nothing
   }
   return data ? JSON5.parse(data) : {};
 };
 
-module.exports = utils;
+export default utils;
