@@ -1,5 +1,10 @@
 # Change Log
 
+
+##
+## Added
+- creating new documents
+
 ## 1.1.0
 ## Added
 - extended list of supported formats
