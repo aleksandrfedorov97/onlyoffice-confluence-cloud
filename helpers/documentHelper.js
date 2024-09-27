@@ -69,7 +69,11 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
     let mode = "view";
     let callbackUrl = null;
 
-    let permissionEdit = await requestHelper.checkContentPermission(httpClient, userInfo.accountId, attachmentInfo.id, "update");
+    let permittedOperations = await requestHelper.getPermittedOperationsForContent(httpClient, userInfo.accountId, "pages", attachmentInfo.pageId);
+
+    const permissionEdit = permittedOperations.operations
+        .filter(operation => operation.targetType === "attachment" && operation.operation === "create")
+        .length > 0;
 
     if (permissionEdit && documentHelper.isEditable(addon, fileType)) {
         mode = "edit";
