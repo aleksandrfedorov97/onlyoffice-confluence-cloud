@@ -237,6 +237,30 @@ export function checkContentPermission(httpClient, userAccountId, attachmentId, 
     });
 }
 
+export function getPermittedOperationsForContent(httpClient, accountId, contentType, contentId) {
+    return new Promise((resolve, reject) => {
+        if (!/^[A-Z0-9-]+$/i.test(contentId)) {
+            reject(new Error("Invalid content ID"));
+            return;
+        }
+        httpClient.asUserByAccountId(accountId).get({
+            url: `/api/v2/${contentType}/${encodeURIComponent(
+                contentId
+            )}/operations`,
+            headers: {
+                "X-Atlassian-Token": "no-check"
+            }
+        }, function(err, response, body) {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve(JSON.parse(body));
+        });
+    });
+}
+
 export async function getFileDataFromUrl(url) {
     const file = await axios({
         method: "get",
@@ -259,5 +283,6 @@ export default {
     updateContent,
     getUriDownloadAttachment,
     checkContentPermission,
+    getPermittedOperationsForContent,
     getFileDataFromUrl
 };
