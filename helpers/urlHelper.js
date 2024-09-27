@@ -72,7 +72,7 @@ urlHelper.getDocApiUrl = async function (addon, clientKey) {
 
 urlHelper.getEditorUrl = function (hostBaseUrl, addonKey, pageId, attachmentId = "") {
     hostBaseUrl = hostBaseUrl.endsWith('/') ? hostBaseUrl.slice(0, -1) : hostBaseUrl;
-    attachmentId = attachmentId.startsWith('att') ? attachmentId.slice(3) : hostBaseUrl;
+    attachmentId = attachmentId.startsWith('att') ? attachmentId.slice(3) : attachmentId;
 
     return `${hostBaseUrl}/plugins/servlet/ac/${addonKey}/editor?page.id=${pageId}&attachment.id=${attachmentId}`;
 }
