@@ -63,7 +63,15 @@
                         "chrome": false,
                         "size": "x-large"
                     }
-                }
+                },
+                "conditions": [
+                    {
+                        "condition": "has_page_permission",
+                        "params": {
+                            "permission": "EDIT"
+                        }
+                    }
+                ]
             },
             {
                 "key": "web-item-onlyoffice-edit",
