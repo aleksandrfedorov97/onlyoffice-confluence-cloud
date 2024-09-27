@@ -104,7 +104,8 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
             lang: "en",
             user: {
                 id: userInfo.accountId,
-                name: userInfo.displayName
+                name: userInfo.displayName,
+                image: urlHelper.getUserImageUrl(hostBaseUrl, userInfo)
             },
             customization: {
                 goback: {

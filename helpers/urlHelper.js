@@ -76,6 +76,12 @@ urlHelper.getEditorUrl = function (hostBaseUrl, addonKey, pageId, attachmentId =
     return `${hostBaseUrl}/plugins/servlet/ac/${addonKey}/editor?page.id=${pageId}&attachment.id=${attachmentId}`;
 }
 
+urlHelper.getUserImageUrl = function(hostBaseUrl, userInfo) {
+    const baseUrl = hostBaseUrl.endsWith('/wiki') ? hostBaseUrl.slice(0, -5) : hostBaseUrl;
+
+    return `${baseUrl}${userInfo.profilePicture.path}`
+}
+
 function appendSlash(url) {
     return url.replace(/\/$|$/, '/');
 }
