@@ -16,8 +16,7 @@
 
 import urlHelper from "./urlHelper.js";
 import requestHelper from "./requestHelper.js";
-import { dirname } from 'path';
-import path from 'path';
+import path, { dirname } from "path";
 import fs from "fs";
 
 var documentHelper = {};
@@ -124,13 +123,13 @@ documentHelper.getDefaultExtensionByDocumentType = function(type) {
     }
 
     switch (type) {
-        case 'word':
+        case "word":
             return "docx";
-        case 'cell':
+        case "cell":
             return "xlsx";
-        case 'slide':
+        case "slide":
             return "pptx";
-        case 'pdf':
+        case "pdf":
             return "pdf";
         default:
             return null;
@@ -144,9 +143,9 @@ documentHelper.getBlankFile = function(type, locale) {
     var getFilePath = (folder, extension) => {
         return path.join(
             appRootScriptDir,
-            'resources',
-            'assets',
-            'document-templates',
+            "resources",
+            "assets",
+            "document-templates",
             folder,
             `new.${extension}`
         )
@@ -162,7 +161,7 @@ documentHelper.getBlankFile = function(type, locale) {
         return fs.readFileSync(filePath);
     }
 
-    filePath = getFilePath('en', extension);
+    filePath = getFilePath("en", extension);
     return fs.readFileSync(filePath);
 }
 

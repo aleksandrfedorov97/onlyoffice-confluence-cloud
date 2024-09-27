@@ -14,24 +14,24 @@
 * limitations under the License.
 */
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import Button from '@atlaskit/button/new';
-import { Field } from '@atlaskit/form';
-import Textfield from '@atlaskit/textfield';
-import SectionMessage from '@atlaskit/section-message';
-import { Box } from '@atlaskit/primitives';
+import Button from "@atlaskit/button/new";
+import { Field } from "@atlaskit/form";
+import Textfield from "@atlaskit/textfield";
+import SectionMessage from "@atlaskit/section-message";
+import { Box } from "@atlaskit/primitives";
 import Modal, {
   ModalBody,
   ModalFooter,
   ModalHeader,
   ModalTitle,
   ModalTransition
-} from '@atlaskit/modal-dialog';
+} from "@atlaskit/modal-dialog";
 
-import OnlyofficeCreateTypes from './component/OnlyofficeCreateTypes';
+import OnlyofficeCreateTypes from "./component/OnlyofficeCreateTypes";
 
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError } from "axios";
 
 export default function Create({
   pageId,
@@ -39,7 +39,7 @@ export default function Create({
   locales,
   localBaseUrl
 }) {
-  const [title, setTitle] = useState('New Document');
+  const [title, setTitle] = useState("New Document");
   const [type, setType] = useState(null);
   const [creating, setCreating] = useState(false);
   const [creatingError, setCreatingError] = useState(null);
@@ -89,7 +89,7 @@ export default function Create({
         AP.navigator.reload();
       }).catch((e) => {
         const creatingError = {
-          title: locales['creating.error.message']
+          title: locales["creating.error.message"]
         }
 
         if (e instanceof AxiosError && e.status === 400) {
@@ -100,7 +100,7 @@ export default function Create({
           if (position !== -1) {
             const fileName = message.slice(position + alreadyExistMessage.length);
 
-            creatingError.message = locales['creating.error.already-exist.message'];
+            creatingError.message = locales["creating.error.already-exist.message"];
             creatingError.fileName = fileName;
           }
         }

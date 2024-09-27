@@ -14,11 +14,11 @@
 * limitations under the License.
 */
 
-import React from 'react';
+import React from "react";
 
-import { Inline, Stack, Box, xcss, Text } from '@atlaskit/primitives';
-import { token } from '@atlaskit/tokens';
-import Image from '@atlaskit/image';
+import { Inline, Stack, Box, xcss, Text } from "@atlaskit/primitives";
+import { token } from "@atlaskit/tokens";
+import Image from "@atlaskit/image";
 
 export default function OnlyofficeCreateTypes({
   creatableTypes,
@@ -28,12 +28,12 @@ export default function OnlyofficeCreateTypes({
   isDisabled = false
 }) {
   const boxStyles = xcss({
-    width: '100%',
-    textAlign: 'center',
-    borderRadius: '3px',
-    backgroundColor: token('color.background.neutral'),
-    ':hover': isDisabled ? {} : {
-      backgroundColor: token('color.background.neutral.hovered'),
+    width: "100%",
+    textAlign: "center",
+    borderRadius: "3px",
+    backgroundColor: token("color.background.neutral"),
+    ":hover": isDisabled ? {} : {
+      backgroundColor: token("color.background.neutral.hovered"),
     },
     opacity: isDisabled ? "50%" : ""
   });
@@ -55,7 +55,7 @@ export default function OnlyofficeCreateTypes({
         {creatableTypes.map((type) => (
           <Box key={type} xcss={boxStyles}
             style={
-              type === value ? { backgroundColor: token('color.background.neutral.hovered') } : {}
+              type === value ? { backgroundColor: token("color.background.neutral.hovered") } : {}
             }
           >
             <input

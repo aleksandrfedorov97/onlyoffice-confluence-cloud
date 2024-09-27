@@ -15,11 +15,11 @@
   <script id="__root_component_script" src="{{rootComponentSource}}" data-props="{{props}}"></script>
   <script>
     window.AP.theming.initializeTheming();
-    var props = JSON.parse(document.getElementById('__root_component_script').getAttribute('data-props'));
+    var props = JSON.parse(document.getElementById("__root_component_script").getAttribute("data-props"));
     {{#if browserOnly}}
-      ReactDOM.render(React.createElement(window.__root_component.default, props), document.getElementById('content'));
+      ReactDOM.render(React.createElement(window.__root_component.default, props), document.getElementById("content"));
     {{else}}
-      ReactDOM.hydrate(React.createElement(window.__root_component.default, props), document.getElementById('content'));
+      ReactDOM.hydrate(React.createElement(window.__root_component.default, props), document.getElementById("content"));
     {{/if}}
   </script>
 </body>

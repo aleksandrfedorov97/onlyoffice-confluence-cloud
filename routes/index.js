@@ -37,7 +37,7 @@ import {
     verifyQueryToken
 } from "../helpers/jwtManager.js";
 
-import i18n from 'i18n';
+import i18n from "i18n";
 
 export default function routes(app, addon) {
     // Redirect root path to /atlassian-connect.json,
@@ -132,7 +132,7 @@ export default function routes(app, addon) {
         }
     });
 
-    app.get('/create', addon.authenticate(), async (req, res) => {
+    app.get("/create", addon.authenticate(), async (req, res) => {
         const creatableTypes = ["word", "cell", "slide", "pdf"];
 
         const localBaseUrl = req.context.localBaseUrl;
@@ -153,7 +153,7 @@ export default function routes(app, addon) {
         };
 
         res.render(
-            'create.jsx',
+            "create.jsx",
             {
                 pageId: pageId,
                 creatableTypes: creatableTypes,
@@ -163,7 +163,7 @@ export default function routes(app, addon) {
         );
     });
 
-    app.post('/create/:contentId', addon.authenticate(true), async (req, res) => {
+    app.post("/create/:contentId", addon.authenticate(true), async (req, res) => {
         const httpClient = addon.httpClient(req);
 
         const userAccountId = req.context.userAccountId;
@@ -176,7 +176,7 @@ export default function routes(app, addon) {
 
         const fileData = documentHelper.getBlankFile(
             type,
-            new Intl.Locale(locale.replace('_', '-'))
+            new Intl.Locale(locale.replace("_", "-"))
         ); 
 
         createContent(
