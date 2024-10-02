@@ -1,5 +1,10 @@
 # Change Log
 
+
+##
+## Added
+- user image in editor
+
 ## 1.1.0
 ## Added
 - extended list of supported formats
