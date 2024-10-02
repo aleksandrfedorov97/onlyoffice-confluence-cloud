@@ -3,6 +3,7 @@
 
 ##
 ## Added
+- creating new documents
 - user image in editor
 
 ## 1.1.0

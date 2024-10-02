@@ -27,11 +27,17 @@
     "watch-jsx-node": "parcel watch --log-level 1 --target node --out-dir views/node views/*.jsx",
     "watch-jsx": "concurrently 'npm:watch-jsx-browser' 'npm:watch-jsx-node'",
     "watch": "concurrently -i 'npm:watch-server' 'npm:watch-jsx-browser' 'npm:watch-jsx-node'",
-    "lint": "eslint app.js server-side-rendering.js routes helpers"
+    "lint": "eslint app.js server-side-rendering.js routes helpers views/**/*.jsx"
   },
   "dependencies": {
     "@atlaskit/button": "^20.2.0",
     "@atlaskit/section-message": "^6.6.4",
+    "@atlaskit/modal-dialog": "^12.16.0",
+    "@atlaskit/primitives": "^12.2.0",
+    "@atlaskit/form": "^10.5.3",
+    "@atlaskit/textfield": "^6.5.1",
+    "@atlaskit/image": "^1.3.1",
+    "@atlaskit/tokens": "^1.61.0",
     "atlassian-connect-express": "^11.4.1",
     "atlassian-jwt": "^2.0.3",
     "axios": "^1.7.7",

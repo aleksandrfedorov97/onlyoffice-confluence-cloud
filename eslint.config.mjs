@@ -22,6 +22,12 @@ export default [...compat.extends("eslint:recommended", "plugin:react/recommende
 
         ecmaVersion: 2020,
         sourceType: "module",
+
+        parserOptions: {
+            ecmaFeatures: {
+                jsx: true,
+            },
+        },
     },
 
     settings: {
@@ -29,6 +35,8 @@ export default [...compat.extends("eslint:recommended", "plugin:react/recommende
             version: "detect",
         },
     },
+
+    files : [ '**/*.{js,jsx,mjs,cjs,ts,tsx}' ] , 
 
     rules: {
         "no-console": "off",

@@ -143,6 +143,35 @@ export function getUserInfo(httpClient, userAccountId) {
     });
 }
 
+export function createContent(httpClient, userAccountId, pageId, title, fileData) {
+    return new Promise((resolve, reject) => {
+        httpClient.asUserByAccountId(userAccountId).post({
+            headers: {
+                "X-Atlassian-Token": "no-check",
+                "Accept": "application/json"
+            },
+            multipartFormData: {
+                file: [fileData, { filename: title }],
+            },
+            url: `/rest/api/content/${encodeURIComponent(
+                pageId
+            )}/child/attachment`,
+            json: true
+        }, function(err, response, body) {
+            if (response.statusCode == 200) {
+                resolve(body);
+            } else {
+                reject({
+                    method: "createContent",
+                    code: response.statusCode,
+                    type: response.statusMessage,
+                    message: body.message ? body.message : body,
+                });
+            }
+        });
+    });
+}
+
 export function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData) {
     return new Promise((resolve, reject) => {
         httpClient.asUserByAccountId(userAccountId).post({
@@ -280,6 +309,7 @@ export default {
     getAttachmentInfo,
     getAttachmentsOnPage,
     getUserInfo,
+    createContent,
     updateContent,
     getUriDownloadAttachment,
     checkContentPermission,
