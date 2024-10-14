@@ -207,6 +207,7 @@ export default function routes(app, addon) {
 
         const pageId = req.query.pageId;
         const attachmentId = req.query.attachmentId;
+        const mode = req.query.mode;
 
         addon.logger.info(`Request to generate a configuration to open the editor:\n${util.inspect({
             clientKey: clientKey,
@@ -257,6 +258,10 @@ export default function routes(app, addon) {
                 attachmentInfo, 
                 userInfo
             );
+
+            if (mode === "fillForms" && editorConfig.document.permissions.fillForms) {
+                editorConfig.document.permissions.edit = false;
+            }
 
             const jwtSecret = await getJwtSecret(addon, clientKey);
 

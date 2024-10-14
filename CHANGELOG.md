@@ -5,6 +5,10 @@
 ## Added
 - creating new documents
 - user image in editor
+- editing pdf
+
+## Changed
+- extended list of supported formats
 
 ## 1.1.0
 ## Added
