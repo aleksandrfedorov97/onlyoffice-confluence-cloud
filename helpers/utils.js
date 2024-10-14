@@ -27,7 +27,7 @@ utils.loadJSON = function loadConfig(path) {
   let data = {};
   try {
     data = utils.loadFile(path);
-  } catch (e) {
+  } catch {
     // do nothing
   }
   return data ? JSON5.parse(data) : {};

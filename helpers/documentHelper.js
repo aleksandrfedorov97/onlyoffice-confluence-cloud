@@ -16,6 +16,8 @@
 
 import urlHelper from "./urlHelper.js";
 import requestHelper from "./requestHelper.js";
+import path, { dirname } from "path";
+import fs from "fs";
 
 var documentHelper = {};
 
@@ -75,9 +77,14 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
 
     let callbackUrl = null;
 
-    let permissionEdit = await requestHelper.checkContentPermission(httpClient, userInfo.accountId, attachmentInfo.id, "update");
+    let permittedOperations = await requestHelper.getPermittedOperationsForContent(httpClient, userInfo.accountId, "pages", attachmentInfo.pageId);
+
     let isEditable = documentHelper.isEditable(addon, fileType);
     let isFillable = documentHelper.isFillable(addon, fileType);
+
+    const permissionEdit = permittedOperations.operations
+        .filter(operation => operation.targetType === "attachment" && operation.operation === "create")
+        .length > 0;
 
     if (permissionEdit && (isEditable || isFillable)) {
         callbackUrl = await urlHelper.getCallbackUrl(
@@ -118,7 +125,8 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
             lang: "en",
             user: {
                 id: userInfo.accountId,
-                name: userInfo.displayName
+                name: userInfo.displayName,
+                image: urlHelper.getUserImageUrl(hostBaseUrl, userInfo)
             },
             customization: {
                 goback: {
@@ -127,6 +135,54 @@ documentHelper.getEditorConfig = async function (addon, httpClient, clientKey, l
             }
         }
     };
+}
+
+documentHelper.getDefaultExtensionByDocumentType = function(type) {
+    if (type == null) {
+        return null;
+    }
+
+    switch (type) {
+        case "word":
+            return "docx";
+        case "cell":
+            return "xlsx";
+        case "slide":
+            return "pptx";
+        case "pdf":
+            return "pdf";
+        default:
+            return null;
+    }
+}
+
+documentHelper.getBlankFile = function(type, locale) {
+    const appRootScriptDir = dirname(process.argv[1]);
+    const extension = documentHelper.getDefaultExtensionByDocumentType(type);
+
+    var getFilePath = (folder, extension) => {
+        return path.join(
+            appRootScriptDir,
+            "resources",
+            "assets",
+            "document-templates",
+            folder,
+            `new.${extension}`
+        )
+    };
+
+    var filePath = getFilePath(locale.baseName, extension);
+    if (fs.existsSync(filePath)) {
+        return fs.readFileSync(filePath);
+    }
+
+    filePath = getFilePath(locale.language, extension);
+    if (fs.existsSync(filePath)) {
+        return fs.readFileSync(filePath);
+    }
+
+    filePath = getFilePath("en", extension);
+    return fs.readFileSync(filePath);
 }
 
 export default documentHelper;

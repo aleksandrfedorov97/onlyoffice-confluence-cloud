@@ -49,6 +49,9 @@ import { addServerSideRendering } from './server-side-rendering';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import utils from './helpers/utils';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // Bootstrap Express and atlassian-connect-express
 const app = express();

@@ -27,7 +27,8 @@ import {
     getUserInfo,
     updateContent,
     getUriDownloadAttachment,
-    getFileDataFromUrl
+    getFileDataFromUrl,
+    createContent
 } from "../helpers/requestHelper.js";
 
 import {
@@ -35,6 +36,8 @@ import {
     getJwtHeader,
     verifyQueryToken
 } from "../helpers/jwtManager.js";
+
+import i18n from "i18n";
 
 export default function routes(app, addon) {
     // Redirect root path to /atlassian-connect.json,
@@ -127,6 +130,71 @@ export default function routes(app, addon) {
             addon.logger.warn(error);
             res.status(500).send("Internal error");
         }
+    });
+
+    app.get("/create", addon.authenticate(), async (req, res) => {
+        const creatableTypes = ["word", "cell", "slide", "pdf"];
+
+        const localBaseUrl = req.context.localBaseUrl;
+        const pageId = req.query.pageId;
+
+        const locales = {
+            "creation.header": i18n.__("creation.header"),
+            "creation.title.placeholder": i18n.__("creation.title.placeholder"),
+            "creation.label.title": i18n.__("creation.label.title"),
+            "creation.label.word": i18n.__("creation.label.word"),
+            "creation.label.cell": i18n.__("creation.label.cell"),
+            "creation.label.slide": i18n.__("creation.label.slide"),
+            "creation.label.pdf": i18n.__("creation.label.pdf"),
+            "creating.error.message": i18n.__("creating.error.message"),
+            "creating.error.already-exist.message": i18n.__("creating.error.already-exist.message"),
+            "label.create": i18n.__("label.create"),
+            "label.cancel": i18n.__("label.cancel")
+        };
+
+        res.render(
+            "create.jsx",
+            {
+                pageId: pageId,
+                creatableTypes: creatableTypes,
+                locales: locales,
+                localBaseUrl: localBaseUrl
+            }
+        );
+    });
+
+    app.post("/create/:contentId", addon.authenticate(true), async (req, res) => {
+        const httpClient = addon.httpClient(req);
+
+        const userAccountId = req.context.userAccountId;
+        const hostBaseUrl = req.context.hostBaseUrl;
+        const addonKey = req.context.addonKey;
+        const contentId = req.params.contentId;
+        const title = req.body.title;
+        const type = req.body.type;
+        const locale = req.body.locale;
+
+        const fileData = documentHelper.getBlankFile(
+            type,
+            new Intl.Locale(locale.replace("_", "-"))
+        ); 
+
+        createContent(
+            httpClient,
+            userAccountId,
+            contentId,
+            `${title}.${documentHelper.getDefaultExtensionByDocumentType(type)}`,
+            fileData
+        ).then((response) => {
+            const attachmentId = response.results[0].id;
+            res.json(
+                {
+                    editorUrl: urlHelper.getEditorUrl(hostBaseUrl, addonKey, contentId, attachmentId)
+                }
+            );
+        }).catch((e) => {
+            res.status(e.code || 500).json(e || "Undefined error.");
+        });
     });
 
     app.get('/editor', addon.authenticate(), async (req, res) => {
@@ -438,7 +506,7 @@ export default function routes(app, addon) {
             }
 
             res.json(result);
-        } catch (e) {
+        } catch {
             addon.logger.warn(error);
             res.status(error.code || 500).send(error.message || "Undefined error.");
         }

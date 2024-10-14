@@ -1,9 +1,14 @@
 # Change Log
 
-# 
+
+##
+## Added
+- creating new documents
+- user image in editor
+- editing pdf
+
 ## Changed
 - extended list of supported formats
-- filling and editing pdf
 
 ## 1.1.0
 ## Added

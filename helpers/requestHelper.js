@@ -143,6 +143,35 @@ export function getUserInfo(httpClient, userAccountId) {
     });
 }
 
+export function createContent(httpClient, userAccountId, pageId, title, fileData) {
+    return new Promise((resolve, reject) => {
+        httpClient.asUserByAccountId(userAccountId).post({
+            headers: {
+                "X-Atlassian-Token": "no-check",
+                "Accept": "application/json"
+            },
+            multipartFormData: {
+                file: [fileData, { filename: title }],
+            },
+            url: `/rest/api/content/${encodeURIComponent(
+                pageId
+            )}/child/attachment`,
+            json: true
+        }, function(err, response, body) {
+            if (response.statusCode == 200) {
+                resolve(body);
+            } else {
+                reject({
+                    method: "createContent",
+                    code: response.statusCode,
+                    type: response.statusMessage,
+                    message: body.message ? body.message : body,
+                });
+            }
+        });
+    });
+}
+
 export function updateContent(httpClient, userAccountId, pageId, attachmentId, fileData) {
     return new Promise((resolve, reject) => {
         httpClient.asUserByAccountId(userAccountId).post({
@@ -237,6 +266,30 @@ export function checkContentPermission(httpClient, userAccountId, attachmentId, 
     });
 }
 
+export function getPermittedOperationsForContent(httpClient, accountId, contentType, contentId) {
+    return new Promise((resolve, reject) => {
+        if (!/^[A-Z0-9-]+$/i.test(contentId)) {
+            reject(new Error("Invalid content ID"));
+            return;
+        }
+        httpClient.asUserByAccountId(accountId).get({
+            url: `/api/v2/${contentType}/${encodeURIComponent(
+                contentId
+            )}/operations`,
+            headers: {
+                "X-Atlassian-Token": "no-check"
+            }
+        }, function(err, response, body) {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve(JSON.parse(body));
+        });
+    });
+}
+
 export async function getFileDataFromUrl(url) {
     const file = await axios({
         method: "get",
@@ -256,8 +309,10 @@ export default {
     getAttachmentInfo,
     getAttachmentsOnPage,
     getUserInfo,
+    createContent,
     updateContent,
     getUriDownloadAttachment,
     checkContentPermission,
+    getPermittedOperationsForContent,
     getFileDataFromUrl
 };

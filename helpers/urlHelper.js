@@ -71,9 +71,16 @@ urlHelper.getDocApiUrl = async function (addon, clientKey) {
 }
 
 urlHelper.getEditorUrl = function (hostBaseUrl, addonKey, pageId, attachmentId = "") {
-    hostBaseUrl = hostBaseUrl.endsWith('/') ? hostBaseUrl.slice(0, -1) : hostBaseUrl;
+    hostBaseUrl = hostBaseUrl.endsWith("/") ? hostBaseUrl.slice(0, -1) : hostBaseUrl;
+    attachmentId = attachmentId.startsWith("att") ? attachmentId.slice(3) : attachmentId;
 
     return `${hostBaseUrl}/plugins/servlet/ac/${addonKey}/editor?page.id=${pageId}&attachment.id=${attachmentId}`;
+}
+
+urlHelper.getUserImageUrl = function(hostBaseUrl, userInfo) {
+    const baseUrl = hostBaseUrl.endsWith('/wiki') ? hostBaseUrl.slice(0, -5) : hostBaseUrl;
+
+    return `${baseUrl}${userInfo.profilePicture.path}`
 }
 
 function appendSlash(url) {
