@@ -271,13 +271,22 @@ export default function routes(app, addon) {
                 editorConfig.token = "";
             }
 
+            const locales = {
+                "You are not permitted to perform this operation.": i18n.__("You are not permitted to perform this operation."),
+                "Attachment File Not Found": i18n.__("Attachment File Not Found"),
+                "Unknown error": i18n.__("Unknown error"),
+                "ONLYOFFICE cannot be reached. Please contact admin.": i18n.__("ONLYOFFICE cannot be reached. Please contact admin.")
+            };
+
             res.render(
-                'editor.hbs',
+                'editor.jsx',
                 {
-                    editorConfig: JSON.stringify(editorConfig),
+                    editorConfig: editorConfig,
                     docApiUrl: await urlHelper.getDocApiUrl(addon, clientKey),
                     pageId: pageId,
-                    editorUrl: urlHelper.getEditorUrl(hostBaseUrl, addonKey, pageId)
+                    editorUrl: urlHelper.getEditorUrl(hostBaseUrl, addonKey, pageId),
+                    localBaseUrl: localBaseUrl,
+                    locales
                 }
             );
         } catch (error) {
