@@ -229,43 +229,6 @@ export function getUriDownloadAttachment(httpClient, userAccountId, pageId, atta
     });
 }
 
-export function checkContentPermission(httpClient, userAccountId, attachmentId, operation) {
-    return new Promise((resolve, reject) => {
-        if (!/^[A-Z0-9-]+$/i.test(attachmentId)) {
-            reject(new Error("Invalid content ID"));
-            return;
-        }
-        httpClient.post({
-            url: `/rest/api/content/${encodeURIComponent(
-                attachmentId
-            )}/permission/check`,
-            headers: {
-                "X-Atlassian-Token": "no-check"
-            },
-            json: {
-                subject: {
-                    type: "user",
-                    identifier: userAccountId
-                },
-                operation
-            }
-        }, function(err, response, body) {
-            if (err) {
-                reject(err);
-                return;
-            }
-
-            if (Object.prototype.hasOwnProperty.call(body, "hasPermission")) {
-                resolve(body.hasPermission);
-                return;
-            }
-
-            resolve(false);
-            }
-        );
-    });
-}
-
 export function getPermittedOperationsForContent(httpClient, accountId, contentType, contentId) {
     return new Promise((resolve, reject) => {
         if (!/^[A-Z0-9-]+$/i.test(contentId)) {
@@ -312,7 +275,6 @@ export default {
     createContent,
     updateContent,
     getUriDownloadAttachment,
-    checkContentPermission,
     getPermittedOperationsForContent,
     getFileDataFromUrl
 };
