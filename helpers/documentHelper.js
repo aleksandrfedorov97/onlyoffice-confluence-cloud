@@ -181,7 +181,7 @@ documentHelper.getBlankFile = function(type, locale) {
         return fs.readFileSync(filePath);
     }
 
-    filePath = getFilePath("en", extension);
+    filePath = getFilePath("default", extension);
     return fs.readFileSync(filePath);
 }
 

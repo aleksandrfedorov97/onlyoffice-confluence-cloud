@@ -2,3 +2,7 @@
 	path = public/assets/document-formats
 	url = https://github.com/ONLYOFFICE/document-formats
 	branch = master
+[submodule "resources/assets/document-templates"]
+	path = resources/assets/document-templates
+	url = https://github.com/ONLYOFFICE/document-templates
+	branch = main/new-2letter-code
