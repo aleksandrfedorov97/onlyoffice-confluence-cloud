@@ -1,4 +1,4 @@
-FROM node:21-alpine AS confluence-cloud
+FROM node:18-alpine AS confluence-cloud
 LABEL maintainer="Ascensio System SIA <support@onlyoffice.com>"
 
 ARG NODE_ENV=production
@@ -14,12 +14,13 @@ RUN apk update \
     && apk --no-cache add git
 
 COPY ./package*.json ./
-RUN npm install
+RUN npm install --also=dev
 
 COPY . .
 RUN git submodule update --init --recursive
+RUN npm run build
 
-RUN npx run build
+RUN npm ci
 
 EXPOSE $PORT
 CMD [ "npm", "start" ]
