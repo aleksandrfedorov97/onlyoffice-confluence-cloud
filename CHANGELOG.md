@@ -1,7 +1,7 @@
 # Change Log
 
 
-##
+## 1.2.0
 ## Added
 - creating new documents
 - user image in editor
