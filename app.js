@@ -55,7 +55,7 @@ dotenv.config();
 
 // Bootstrap Express and atlassian-connect-express
 const app = express();
-const formats = utils.loadJSON('./public/assets/document-formats/onlyoffice-docs-formats.json');
+const formats = utils.loadJSON('./resources/assets/document-formats/onlyoffice-docs-formats.json');
 const addon = ace(app, {config: {docServer: {formats: formats}}});
 
 // See config.json
