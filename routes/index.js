@@ -28,7 +28,8 @@ import {
     updateContent,
     getUriDownloadAttachment,
     getFileDataFromUrl,
-    createContent
+    createContent,
+    getUsersByIds
 } from "../helpers/requestHelper.js";
 
 import {
@@ -524,5 +525,29 @@ export default function routes(app, addon) {
             addon.logger.warn(error);
             res.status(error.code || 500).send(error.message || "Undefined error.");
         }
+    });
+
+    app.post('/users-info', addon.authenticate(true), async (req, res) => {
+        const userAccountId = req.context.userAccountId;
+        const hostBaseUrl = req.context.hostBaseUrl;
+        const ids = req.body.ids;
+
+        const httpClient = addon.httpClient(req);
+
+        const users = await getUsersByIds(httpClient, userAccountId, ids);
+
+        const result = {
+            users: []
+        };
+
+        users.forEach((user) => {
+            result.users.push({
+                id: user.accountId,
+                name: user.displayName,
+                image: urlHelper.getUserImageUrl(hostBaseUrl, user)
+            })
+        });
+
+        res.json(result);
     });
 }
