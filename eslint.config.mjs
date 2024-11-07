@@ -18,6 +18,8 @@ export default [...compat.extends("eslint:recommended", "plugin:react/recommende
             ...globals.node,
             Atomics: "readonly",
             SharedArrayBuffer: "readonly",
+            AP: "readonly",
+            window: true
         },
 
         ecmaVersion: 2020,

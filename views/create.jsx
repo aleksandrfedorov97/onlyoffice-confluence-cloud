@@ -50,14 +50,12 @@ export default function Create({
     setCreatingError(null);
 
     const locale = new Promise(function(resolve) {
-      // eslint-disable-next-line no-undef
       AP.user.getLocale(function(response) {
           resolve(response);
       });
     });
 
     const token = new Promise(function(resolve) {
-      // eslint-disable-next-line no-undef
       AP.context.getToken(function(response) {
           resolve(response);
       });
@@ -85,7 +83,6 @@ export default function Create({
         openEditor.href = response.data.editorUrl;
         openEditor.click();
 
-        // eslint-disable-next-line no-undef
         AP.navigator.reload();
       }).catch((e) => {
         const creatingError = {
@@ -112,7 +109,6 @@ export default function Create({
   };
 
   const onClose = () => {
-    // eslint-disable-next-line no-undef
     AP.dialog.close();
   }
 

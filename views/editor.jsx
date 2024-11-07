@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
 import Spinner from "@atlaskit/spinner";
 import axios, { AxiosError } from "axios";
-import { Box, Inline, Text } from "@atlaskit/primitives";
+import { Box, Inline } from "@atlaskit/primitives";
 import Image from '@atlaskit/image';
 
 const containerStyles = {
