@@ -266,12 +266,38 @@ export async function getFileDataFromUrl(url) {
     return file.data;
 }
 
+export async function getUsersByIds(httpClient, accountId, accountIds) {
+    return new Promise((resolve, reject) => {
+        var body = {
+            accountIds: accountIds
+        }
+
+        httpClient.asUserByAccountId(accountId).post({
+            url: "/api/v2/users-bulk",
+            headers: {
+                "X-Atlassian-Token": "no-check",
+                "Accept": "application/json"
+            },
+            body: body,
+            json: true
+        }, function(err, response, body) {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve(body.results);
+        });
+    });
+}
+
 export default {
     getAppProperty,
     setAppProperty,
     getAttachmentInfo,
     getAttachmentsOnPage,
     getUserInfo,
+    getUsersByIds,
     createContent,
     updateContent,
     getUriDownloadAttachment,

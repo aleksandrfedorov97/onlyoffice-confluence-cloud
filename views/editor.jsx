@@ -47,7 +47,8 @@ export default function Editor({
 
       editorConfig.events = {
         "onRequestReferenceData": onRequestReferenceData,
-        "onRequestOpen": onRequestOpen
+        "onRequestOpen": onRequestOpen,
+        "onRequestUsers": onRequestUsers
       }
 
       setLoading(false);
@@ -81,6 +82,35 @@ export default function Editor({
       });
     });
   };
+
+  const onRequestUsers = function(event) {
+    const docEditor = window.DocEditor.instances["onlyoffice-editor"];
+
+    switch (event.data.c) {
+      case "info":
+        AP.context.getToken(async function(token) {
+          const client = axios.create({ baseURL: localBaseUrl });
+          client({
+            method: "POST",
+            url: "users-info",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `JWT ${token}`
+            },
+            data: {ids: event.data.id},
+            timeout: 10000,
+          }).then((response) => {
+            docEditor.setUsers({
+              "c": event.data.c,
+              "users": response.data.users,
+            });
+          }).catch((e)=>{
+            console.error(e);
+          });
+        });
+        break;
+    }
+  }
 
   const onRequestOpen = function(event) {
     const windowName = event.data.windowName;
