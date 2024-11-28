@@ -25,10 +25,6 @@ Supported formats:
 * **SLIDE**: POTM, POTX, PPSM, PPSX, PPTM, PPTX
 * **PDF**: PDF
 
-**For filling:**
-
-* **PDF**: PDF
-
 ## Installing ONLYOFFICE Docs
 
 To be able to edit documents in Confluence Cloud, you will need an instance of ONLYOFFICE Docs (Document Server). You can install free Community version or scalable Enterprise Edition.
