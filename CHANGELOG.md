@@ -1,5 +1,16 @@
 # Change Log
 
+
+## 1.2.0
+## Added
+- creating new documents
+- user image in editor
+- editing pdf
+- Paste Special to add a link between files
+
+## Changed
+- extended list of supported formats
+
 ## 1.0.0
 ## Added
 - configuration page
