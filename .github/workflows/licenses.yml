@@ -12,10 +12,10 @@ jobs:
       - name: Install NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
       - name: Install Dependencies
         run: npm install
       - name: Check Licenses
-        uses: aleksandrfedorov97/check-licenses@v0.0.1
+        uses: ONLYOFFICE/check-licenses@v1
         with:
           project_license: Apache 2.0
