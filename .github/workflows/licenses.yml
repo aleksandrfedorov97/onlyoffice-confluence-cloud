@@ -2,6 +2,10 @@ name: Licenses
 
 on:
   workflow_dispatch:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
 
 jobs:
   licences:
@@ -18,4 +22,4 @@ jobs:
       - name: Check Licenses
         uses: ONLYOFFICE/check-licenses@v1
         with:
-          project_license: Apache 2.0
+          project_license: Apache-2.0
